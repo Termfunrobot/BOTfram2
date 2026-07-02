@@ -1604,154 +1604,383 @@
         };
 
       
-
-
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	
+		
+		
 	function createCowModel() {
-    const group = new THREE.Group();
-    
-    // -------------------------------------------
-    // กำหนดวัสดุและสี (Materials)
-    // -------------------------------------------
-    const wMat = new THREE.MeshLambertMaterial({ color: 0xffffff });     // สีผิวขาวหลัก
-    const bMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });     // สีดำเข้มสำหรับลายจุดและตา
-    const pinkMat = new THREE.MeshLambertMaterial({ color: 0xffb6c1 }); // สีชมพูสำหรับจมูกและเต้านม
-    const hornMat = new THREE.MeshLambertMaterial({ color: 0xe5e5d8 }); // สีครีมสำหรับเขาจิ๋ว
-    const hoofMat = new THREE.MeshLambertMaterial({ color: 0x2d3748 }); // สีเทาเข้มสำหรับกีบเท้า
+            const group = new THREE.Group();
+            
+            // -------------------------------------------
+            // 1. กำหนดวัสดุและสี (Materials)
+            // -------------------------------------------
+            const wMat = new THREE.MeshLambertMaterial({ color: 0xfdfdfd }); // สีขาว
+            const bMat = new THREE.MeshLambertMaterial({ color: 0x1f1f1f }); // สีดำ
+            const pinkMat = new THREE.MeshLambertMaterial({ color: 0xe8a9a9 }); // สีชมพู
+            const hornMat = new THREE.MeshLambertMaterial({ color: 0xe5e5d8 }); // สีครีม
+            const hoofMat = new THREE.MeshLambertMaterial({ color: 0x2a2a2a }); // สีเทาเข้ม
+            const collarMat = new THREE.MeshLambertMaterial({ color: 0x4a2e15 }); // สีน้ำตาลเข้ม
+            const bellMat = new THREE.MeshLambertMaterial({ color: 0xc5a059 }); // สีทองเหลือง
+            const tagMat = new THREE.MeshLambertMaterial({ color: 0xffd700 }); // สีเหลือง
 
-    // -------------------------------------------
-    // ส่วนลำตัวและลายจุด (Body & Spots)
-    // -------------------------------------------
-    // ตัววัวหลัก (สีขาว)
-    const body = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.4, 0.8), wMat);
-    body.position.y = 0.4; body.castShadow = true; body.receiveShadow = true;
-    group.add(body);
-    
-    // ลายจุดฝั่งขวา (Right Spot)
-    const spotRight = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.25, 0.35), bMat);
-    spotRight.position.set(0.251, 0.45, 0.05); group.add(spotRight);
+            // -------------------------------------------
+            // 2. ลำตัวและลายจุด (Body & Spots)
+            // -------------------------------------------
+            // สร้างบอดี้ให้ "ตรง" โดยใช้ทรงกระบอกแนวนอน (เหมือนแคปซูล)
+            const bodyGroup = new THREE.Group();
+            
+            const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.6, 24), wMat);
+            barrel.rotation.x = Math.PI / 2; // จับนอนแนวนอน
+            
+            const frontCap = new THREE.Mesh(new THREE.SphereGeometry(0.24, 24, 24), wMat);
+            frontCap.position.z = 0.3; // ปิดตูดด้านหน้า
+            
+            const backCap = new THREE.Mesh(new THREE.SphereGeometry(0.24, 24, 24), wMat);
+            backCap.position.z = -0.3; // ปิดตูดด้านหลัง
 
-    // ลายจุดฝั่งซ้าย (Left Spot)
-    const spotLeft = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.2, 0.3), bMat);
-    spotLeft.position.set(-0.251, 0.38, -0.15); group.add(spotLeft);
+            bodyGroup.add(barrel, frontCap, backCap);
+            bodyGroup.position.set(0, 0.45, 0); 
+            group.add(bodyGroup);
 
-    // ลายจุดด้านบนหลัง (Top Spot)
-    const spotTop = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.02, 0.2), bMat);
-    spotTop.position.set(-0.05, 0.601, 0.1); group.add(spotTop);
+            // ลายจุดสีดำ (ปรับให้เข้ากับบอดี้ที่ตรงขึ้น)
+            const spot1 = new THREE.Mesh(new THREE.SphereGeometry(0.25, 16, 16), bMat);
+            spot1.scale.set(1.0, 0.9, 1.2);
+            spot1.position.set(0.08, 0.45, 0.15); // ลายข้างขวา
+            
+            const spot2 = new THREE.Mesh(new THREE.SphereGeometry(0.24, 16, 16), bMat);
+            spot2.scale.set(0.9, 1.0, 1.1);
+            spot2.position.set(-0.1, 0.42, -0.15); // ลายข้างซ้ายหลัง
+            
+            const spot3 = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), bMat);
+            spot3.scale.set(1.1, 0.8, 1.0);
+            spot3.position.set(0, 0.55, -0.25); // ลายบนหลัง/สะโพก
+            
+            group.add(spot1, spot2, spot3);
 
-    // -------------------------------------------
-    // ส่วนหัวและใบหน้า (Head & Face Details)
-    // -------------------------------------------
-    // หัววัว (สีขาว)
-    const head = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.3), wMat);
-    head.position.set(0, 0.6, 0.5); head.castShadow = true; group.add(head);
-    
-    // ลายจุดพาดบนหัว
-    const headSpot = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.31, 0.15), bMat);
-    headSpot.position.set(0.08, 0.6, 0.55); group.add(headSpot);
-    
-    // จมูก/ปากวัว (สีชมพู)
-    const snout = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.14, 0.15), pinkMat);
-    snout.position.set(0, 0.5, 0.65); group.add(snout);
+            // คอ (ดึงเชื่อมจากบอดี้ตรงๆ ไปหาหัว)
+            const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.2, 0.25, 16), bMat);
+            neck.rotation.x = Math.PI / 2.5;
+            neck.position.set(0, 0.55, 0.4);
+            group.add(neck);
 
-    // ตาฝั่งซ้าย (Left Eye)
-    const eyeL = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.05, 0.05), bMat);
-    eyeL.position.set(-0.152, 0.63, 0.52); group.add(eyeL);
+            // -------------------------------------------
+            // 3. ส่วนหัวและใบหน้า (Head & Face)
+            // -------------------------------------------
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), wMat);
+            head.scale.set(1.0, 1.05, 1.1);
+            head.position.set(0, 0.65, 0.5);
+            group.add(head);
 
-    // ตาฝั่งขวา (Right Eye)
-    const eyeR = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.05, 0.05), bMat);
-    eyeR.position.set(0.152, 0.63, 0.52); group.add(eyeR);
+            const eyePatchL = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 12), bMat);
+            eyePatchL.position.set(-0.08, 0.67, 0.52);
+            const eyePatchR = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 12), bMat);
+            eyePatchR.position.set(0.08, 0.67, 0.52);
+            group.add(eyePatchL, eyePatchR);
 
-    // หูฝั่งซ้าย (Left Ear)
-    const earL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.04, 0.04), wMat);
-    earL.position.set(-0.18, 0.68, 0.42); earL.rotation.z = 0.2; group.add(earL);
+            const snout = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), pinkMat);
+            snout.scale.set(1.2, 0.85, 1.0);
+            snout.position.set(0, 0.58, 0.62);
+            group.add(snout);
 
-    // หูฝั่งขวา (Right Ear)
-    const earR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.04, 0.04), wMat);
-    earR.position.set(0.18, 0.68, 0.42); earR.rotation.z = -0.2; group.add(earR);
+            const nostrilL = new THREE.Mesh(new THREE.SphereGeometry(0.015, 8, 8), bMat);
+            nostrilL.position.set(-0.04, 0.6, 0.72);
+            const nostrilR = new THREE.Mesh(new THREE.SphereGeometry(0.015, 8, 8), bMat);
+            nostrilR.position.set(0.04, 0.6, 0.72);
+            group.add(nostrilL, nostrilR);
 
-    // เขาฝั่งซ้าย (Left Horn)
-    const hornL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.08, 0.04), hornMat);
-    hornL.position.set(-0.1, 0.78, 0.45); hornL.rotation.z = -0.1; group.add(hornL);
+            const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 8), bMat);
+            eyeL.position.set(-0.12, 0.7, 0.58);
+            const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 8), bMat);
+            eyeR.position.set(0.12, 0.7, 0.58);
+            group.add(eyeL, eyeR);
 
-    // เขาฝั่งขวา (Right Horn)
-    const hornR = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.08, 0.04), hornMat);
-    hornR.position.set(0.1, 0.78, 0.45); hornR.rotation.z = 0.1; group.add(hornR);
+            // -------------------------------------------
+            // 4. หู, เขา, และกระดิ่ง (Ears, Horns, Bell)
+            // -------------------------------------------
+            const earL = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.12, 8), bMat);
+            earL.position.set(-0.18, 0.72, 0.45);
+            earL.rotation.z = Math.PI / 2 + 0.2; earL.rotation.x = 0.2;
+            const earR = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.12, 8), bMat);
+            earR.position.set(0.18, 0.72, 0.45);
+            earR.rotation.z = -Math.PI / 2 - 0.2; earR.rotation.x = 0.2;
+            group.add(earL, earR);
 
-    // -------------------------------------------
-    // ส่วนใต้ท้อง (Udder)
-    // -------------------------------------------
-    const udder = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.1, 0.2), pinkMat);
-    udder.position.set(0, 0.15, -0.1); group.add(udder);
+            const tagL = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.04, 0.03), tagMat);
+            tagL.position.set(-0.19, 0.71, 0.47);
+            const tagR = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.04, 0.03), tagMat);
+            tagR.position.set(0.19, 0.71, 0.47);
+            group.add(tagL, tagR);
 
-    // -------------------------------------------
-    // ส่วนขาและกีบเท้า (Legs & Hooves)
-    // ประกอบเป็น Group ย่อยเพื่อให้เล่นแอนิเมชันเดินได้สมบูรณ์
-    // -------------------------------------------
-    const legPositions = [
-        { x: 0.18, z: 0.28, name: "leg1" },  // หน้าขวา
-        { x: -0.18, z: 0.28, name: "leg2" }, // หน้าซ้าย
-        { x: 0.18, z: -0.28, name: "leg3" }, // หลังขวา
-        { x: -0.18, z: -0.28, name: "leg4" } // หลังซ้าย
-    ];
+            const hornL = new THREE.Mesh(new THREE.ConeGeometry(0.02, 0.06, 8), hornMat);
+            hornL.position.set(-0.08, 0.8, 0.45); hornL.rotation.z = 0.5;
+            const hornR = new THREE.Mesh(new THREE.ConeGeometry(0.02, 0.06, 8), hornMat);
+            hornR.position.set(0.08, 0.8, 0.45); hornR.rotation.z = -0.5;
+            group.add(hornL, hornR);
 
-    legPositions.forEach(pos => {
-        const legGroup = new THREE.Group();
-        legGroup.position.set(pos.x, 0.15, pos.z); // ใช้จุดหมุนกึ่งกลางเดิม
-        legGroup.name = pos.name;
+            const collar = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.015, 8, 16), collarMat);
+            collar.position.set(0, 0.53, 0.44); collar.rotation.x = 0.4; 
+            const bell = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.05, 0.06, 8), bellMat);
+            bell.position.set(0, 0.43, 0.48);
+            group.add(collar, bell);
 
-        // ท่อนขาด้านบน (สีขาว)
-        const legMesh = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.24, 0.1), wMat);
-        legMesh.position.y = 0.03; legMesh.castShadow = true;
-        
-        // กีบเท้าด้านล่าง (สีเทาเข้ม)
-        const hoofMesh = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.06, 0.1), hoofMat);
-        hoofMesh.position.y = -0.12; hoofMesh.castShadow = true;
+            // -------------------------------------------
+            // 5. เต้านมและหาง (Udder & Tail)
+            // -------------------------------------------
+            const udder = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), pinkMat);
+            udder.scale.set(1.0, 0.8, 1.0);
+            udder.position.set(0, 0.23, -0.15);
+            const teatGeo = new THREE.CylinderGeometry(0.01, 0.01, 0.04, 8);
+            const teatPositions = [
+                [-0.04, -0.08, 0.04], [0.04, -0.08, 0.04],
+                [-0.04, -0.08, -0.04], [0.04, -0.08, -0.04]
+            ];
+            teatPositions.forEach(pos => {
+                const teat = new THREE.Mesh(teatGeo, pinkMat);
+                teat.position.set(pos[0], pos[1], pos[2]);
+                udder.add(teat);
+            });
+            group.add(udder);
 
-        legGroup.add(legMesh, hoofMesh);
-        group.add(legGroup);
-    });
+            const tail = new THREE.Group();
+            const tailBone = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.01, 0.25, 8), wMat);
+            tailBone.position.set(0, -0.125, 0); 
+            const tailTuft = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 8), bMat);
+            tailTuft.scale.set(1.0, 1.5, 1.0);
+            tailTuft.position.set(0, -0.26, 0);
+            tail.add(tailBone, tailTuft);
+            tail.position.set(0, 0.48, -0.42);
+            tail.rotation.x = -0.15;
+            group.add(tail);
 
-    return group;
-}
+            // -------------------------------------------
+            // 6. ขาและกีบเท้า (Legs & Hooves)
+            // -------------------------------------------
+            const legPositions = [
+                { x: 0.15, z: 0.25, name: "leg1" },  // หน้าขวา
+                { x: -0.15, z: 0.25, name: "leg2" }, // หน้าซ้าย
+                { x: 0.15, z: -0.25, name: "leg3" }, // หลังขวา
+                { x: -0.15, z: -0.25, name: "leg4" } // หลังซ้าย
+            ];
+
+            legPositions.forEach(pos => {
+                const legGroup = new THREE.Group();
+                legGroup.position.set(pos.x, 0.25, pos.z); 
+                legGroup.name = pos.name;
+
+                const thigh = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 12), wMat);
+                thigh.position.set(0, 0.08, 0); 
+                legGroup.add(thigh);
+
+                const legMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.03, 0.2, 12), wMat);
+                legMesh.position.y = -0.1;
+                
+                const hoofMesh = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.05, 0.09), hoofMat);
+                hoofMesh.position.set(0, -0.225, 0.01); 
+
+                legGroup.add(legMesh, hoofMesh);
+                group.add(legGroup);
+            });
+
+            group.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+
+            group.scale.set(0.9, 0.9, 0.9);
+
+            return group;
+        }
 		
 		
 		
 		
 		
 		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	function createChickenModel() {
+            const group = new THREE.Group();
 
-      function createChickenModel() {
-    const group = new THREE.Group();
-    // กำหนดสีหลัก
-    const orangeMat = new THREE.MeshLambertMaterial({ color: 0xf97316 }); // สีส้มสดใสสำหรับตัวและหัว
-    const rMat = new THREE.MeshLambertMaterial({ color: 0xff0000 }); // สีแดงสำหรับหงอน
-    const yMat = new THREE.MeshLambertMaterial({ color: 0xffa500 }); // สีเหลืองอมส้มสำหรับปากและขา
+            // -------------------------------------------
+            // 1. กำหนดวัสดุและสี (Materials)
+            // -------------------------------------------
+            const bodyMat = new THREE.MeshLambertMaterial({ color: 0xbf6724 }); // สีน้ำตาลส้ม (ลำตัวและหัว)
+            const wingMat = new THREE.MeshLambertMaterial({ color: 0xaa571c }); // สีน้ำตาลเข้มขึ้นเล็กน้อย (ปีก)
+            const tailMat = new THREE.MeshLambertMaterial({ color: 0x5a3416 }); // สีน้ำตาลเข้มมาก (หาง)
+            const redMat = new THREE.MeshLambertMaterial({ color: 0xd92518 });  // สีแดงสด (หงอน, เหนียง)
+            const yellowMat = new THREE.MeshLambertMaterial({ color: 0xf7a81b }); // สีเหลืองส้ม (ปาก, ขา)
+            const blackMat = new THREE.MeshLambertMaterial({ color: 0x222222 }); // สีดำ (ตา)
 
-    // ตัวไก่ (เปลี่ยนเป็นสีส้ม)
-    const body = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.25), orangeMat);
-    body.position.y = 0.15; body.castShadow = true; group.add(body);
-    
-    // หัวไก่ (เปลี่ยนเป็นสีส้ม)
-    const head = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.15, 0.15), orangeMat);
-    head.position.set(0, 0.3, 0.1); group.add(head);
+            // -------------------------------------------
+            // 2. ลำตัวและหัว (Body & Head)
+            // -------------------------------------------
+            // ลำตัวอ้วนกลม
+            const bodyGeo = new THREE.SphereGeometry(0.15, 16, 16);
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            body.scale.set(1.1, 1.0, 1.2); 
+            body.position.set(0, 0.22, 0); 
+            body.castShadow = true;
+            group.add(body);
 
-    // ปากไก่ (สีเหลืองทอง)
-    const beak = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.1, 4), yMat);
-    beak.position.set(0, 0.3, 0.2); beak.rotation.x = Math.PI/2; group.add(beak);
+            // หัว
+            const headGeo = new THREE.SphereGeometry(0.1, 16, 16);
+            const head = new THREE.Mesh(headGeo, bodyMat);
+            head.position.set(0, 0.34, 0.12);
+            head.castShadow = true;
+            group.add(head);
 
-    // หงอนไก่ (สีแดง)
-    const crest = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.08, 0.1), rMat);
-    crest.position.set(0, 0.4, 0.1); group.add(crest);
+            // -------------------------------------------
+            // 3. ปีกและหาง (Wings & Tail)
+            // -------------------------------------------
+            // ปีกซ้าย
+            const wingGeo = new THREE.SphereGeometry(0.09, 16, 16);
+            const wingL = new THREE.Mesh(wingGeo, wingMat);
+            wingL.scale.set(0.3, 0.8, 1.2);
+            wingL.position.set(0.16, 0.22, 0);
+            wingL.rotation.x = -0.1;
+            wingL.castShadow = true;
+            group.add(wingL);
 
-    // ขาไก่ (สีเหลืองทอง)
-    const legGeo = new THREE.BoxGeometry(0.02, 0.1, 0.02);
-    const ll = new THREE.Mesh(legGeo, yMat); ll.position.set(0.05, 0.05, 0); ll.name="leg1";
-    const lr = new THREE.Mesh(legGeo, yMat); lr.position.set(-0.05, 0.05, 0); lr.name="leg2";
-    group.add(ll, lr);
+            // ปีกขวา
+            const wingR = wingL.clone();
+            wingR.position.set(-0.16, 0.22, 0);
+            group.add(wingR);
 
-    group.scale.set(2, 2, 2); 
-    return group;
-}
+            // หาง (ใช้ทรงกลมแบนๆ ซ้อนกัน 3 แฉก สีน้ำตาลเข้ม)
+            const tailGroup = new THREE.Group();
+            const tailFeatherGeo = new THREE.SphereGeometry(0.06, 12, 12);
+            const createTailFeather = (rotZ) => {
+                const feather = new THREE.Mesh(tailFeatherGeo, tailMat);
+                feather.scale.set(0.4, 1.6, 0.8);
+                feather.rotation.z = rotZ;
+                feather.rotation.x = -0.5;
+                feather.castShadow = true;
+                return feather;
+            };
+            tailGroup.add(createTailFeather(0));       // แฉกกลาง
+            tailGroup.add(createTailFeather(0.3));     // แฉกซ้าย
+            tailGroup.add(createTailFeather(-0.3));    // แฉกขวา
+            tailGroup.position.set(0, 0.26, -0.16);
+            group.add(tailGroup);
+
+            // -------------------------------------------
+            // 4. ใบหน้าและรายละเอียด (Face Details)
+            // -------------------------------------------
+            // หงอน (Comb) บนหัว
+            const combGroup = new THREE.Group();
+            const combGeo = new THREE.SphereGeometry(0.025, 12, 12);
+            const createCombNode = (y, z, scaleY) => {
+                const node = new THREE.Mesh(combGeo, redMat);
+                node.scale.set(0.6, scaleY, 1);
+                node.position.set(0, y, z);
+                return node;
+            };
+            combGroup.add(createCombNode(0.43, 0.12, 1.5)); // กลาง (สูงสุด)
+            combGroup.add(createCombNode(0.41, 0.16, 1.2)); // หน้า
+            combGroup.add(createCombNode(0.40, 0.08, 1.0)); // หลัง
+            group.add(combGroup);
+
+            // ปาก (Beak)
+            const beak = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.08, 4), yellowMat);
+            beak.rotation.x = Math.PI / 2;
+            beak.position.set(0, 0.32, 0.22);
+            beak.castShadow = true;
+            group.add(beak);
+
+            // เหนียง (Wattles) ใต้ปาก
+            const wattleGeo = new THREE.SphereGeometry(0.018, 12, 12);
+            const wattleL = new THREE.Mesh(wattleGeo, redMat);
+            wattleL.scale.set(0.8, 1.5, 1);
+            wattleL.position.set(0.015, 0.27, 0.18);
+            const wattleR = wattleL.clone();
+            wattleR.position.set(-0.015, 0.27, 0.18);
+            group.add(wattleL, wattleR);
+
+            // ตา (Eyes)
+            const eyeGeo = new THREE.SphereGeometry(0.012, 8, 8);
+            const eyeL = new THREE.Mesh(eyeGeo, blackMat);
+            eyeL.position.set(0.09, 0.36, 0.15);
+            const eyeR = eyeL.clone();
+            eyeR.position.set(-0.09, 0.36, 0.15);
+            group.add(eyeL, eyeR);
+
+            // -------------------------------------------
+            // 5. ขาและเท้า (Legs & Feet)
+            // -------------------------------------------
+            // ฟังก์ชันสร้างขา (ต้องตั้งชื่อ "leg1" และ "leg2" เพื่อให้ระบบแอนิเมชันเดินทำงานได้ปกติ)
+            const createLeg = (name) => {
+                const legGroup = new THREE.Group();
+                legGroup.name = name; 
+
+                // โคนขา (Thigh - สีเดียวกับตัว)
+                const thigh = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 12), bodyMat);
+                thigh.position.set(0, -0.02, 0); 
+                
+                // แข้ง (Calf - สีเหลือง)
+                const calf = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.012, 0.12, 8), yellowMat);
+                calf.position.set(0, -0.08, 0);
+                calf.castShadow = true;
+
+                // นิ้วเท้า (Foot) แตกเป็น 3 แฉก
+                const footGroup = new THREE.Group();
+                const toeGeo = new THREE.CylinderGeometry(0.01, 0.01, 0.06, 8);
+                
+                const toeMid = new THREE.Mesh(toeGeo, yellowMat);
+                toeMid.rotation.x = Math.PI / 2;
+                toeMid.position.set(0, 0, 0.03);
+                
+                const toeL = new THREE.Mesh(toeGeo, yellowMat);
+                toeL.rotation.x = Math.PI / 2;
+                toeL.rotation.y = -Math.PI / 6;
+                toeL.position.set(0.015, 0, 0.025);
+                
+                const toeR = new THREE.Mesh(toeGeo, yellowMat);
+                toeR.rotation.x = Math.PI / 2;
+                toeR.rotation.y = Math.PI / 6;
+                toeR.position.set(-0.015, 0, 0.025);
+                
+                footGroup.add(toeMid, toeL, toeR);
+                footGroup.position.set(0, -0.14, 0);
+
+                legGroup.add(thigh, calf, footGroup);
+                return legGroup;
+            };
+
+            const leg1 = createLeg("leg1");
+            leg1.position.set(0.07, 0.16, 0); // จุดหมุนขาซ้าย
+            const leg2 = createLeg("leg2");
+            leg2.position.set(-0.07, 0.16, 0); // จุดหมุนขาขวา
+            
+            group.add(leg1, leg2);
+
+            // ปรับขนาดเล็กลงครึ่งหนึ่งจาก 2 เป็น 1
+            group.scale.set(1, 1, 1); 
+            
+            return group;
+        }
 
 
 
@@ -1839,82 +2068,501 @@
             
             return group;
         }
+		
+		
+		
+		
+		
+		
 
-      function createShelter() {
-    const group = new THREE.Group();
-
-    // กำหนดสีน้ำตาลเข้มทั้งหมด (Dark Brown)
-    const darkBrownMat = new THREE.MeshLambertMaterial({ color: 0x3d2314 }); 
-
-    const width = 2.0;
-    const height = 1.6;
-    const depth = 2.0;
-    const thick = 0.1; // ความหนาของผนัง
-
-    // 1. ผนังฝั่งซ้าย (Left Wall)
-    const wallLeft = new THREE.Mesh(new THREE.BoxGeometry(thick, height, depth), darkBrownMat);
-    wallLeft.position.set(-width/2 + thick/2, height/2, 0);
-    wallLeft.castShadow = true; wallLeft.receiveShadow = true;
-    group.add(wallLeft);
-
-    // 2. ผนังฝั่งขวา (Right Wall)
-    const wallRight = new THREE.Mesh(new THREE.BoxGeometry(thick, height, depth), darkBrownMat);
-    wallRight.position.set(width/2 - thick/2, height/2, 0);
-    wallRight.castShadow = true; wallRight.receiveShadow = true;
-    group.add(wallRight);
-
-    // 3. ผนังด้านหลัง (Back Wall)
-    const wallBack = new THREE.Mesh(new THREE.BoxGeometry(width - (thick * 2), height, thick), darkBrownMat);
-    wallBack.position.set(0, height/2, -depth/2 + thick/2);
-    wallBack.castShadow = true; wallBack.receiveShadow = true;
-    group.add(wallBack);
-
-    // 4. ผนังด้านหน้า (Front Wall - เว้นช่องเปิดตรงกลาง ไม่มีประตู)
-    const wallFrontLeft = new THREE.Mesh(new THREE.BoxGeometry(0.5, height, thick), darkBrownMat);
-    wallFrontLeft.position.set(-0.75, height/2, depth/2 - thick/2);
-    wallFrontLeft.castShadow = true; wallFrontLeft.receiveShadow = true;
-    group.add(wallFrontLeft);
-
-    const wallFrontRight = new THREE.Mesh(new THREE.BoxGeometry(0.5, height, thick), darkBrownMat);
-    wallFrontRight.position.set(0.75, height/2, depth/2 - thick/2);
-    wallFrontRight.castShadow = true; wallFrontRight.receiveShadow = true;
-    group.add(wallFrontRight);
-
-    // 5. หลังคาสไตล์โมเดิร์น (สีน้ำตาลเข้มเข้าชุดกัน)
-    const roofGeo = new THREE.BoxGeometry(2.4, 0.15, 2.4);
-    const roof = new THREE.Mesh(roofGeo, darkBrownMat);
-    roof.position.set(0, height + 0.05, 0.1);
-    roof.rotation.x = -0.15; // เอียงลาดไปด้านหลังสไตล์โมเดิร์น
-    roof.castShadow = true;
-    group.add(roof);
-    
-    return group;
-}
-
-
-
-
-        function createGrassModel() {
+     function createShelter() {
             const group = new THREE.Group();
-            const mat = new THREE.MeshLambertMaterial({ color: 0x4ade80 });
-            const geo = new THREE.ConeGeometry(0.1, 0.5, 3);
+
+            // -------------------------------------------
+            // 1. กำหนดวัสดุและสี (Materials)
+            // -------------------------------------------
+            const woodMat = new THREE.MeshLambertMaterial({ color: 0xcc9966 }); // สีไม้ฝาผนัง
+            const frameMat = new THREE.MeshLambertMaterial({ color: 0x996633 }); // สีไม้โครงสร้าง/เสา (เข้มกว่า)
+            const roofBlueMat = new THREE.MeshLambertMaterial({ color: 0x2b5b84 }); // สีหลังคาหลักสีน้ำเงิน
+            const roofGreyMat = new THREE.MeshLambertMaterial({ color: 0x7a7a7a }); // สีหลังคาส่วนต่อขยายสีเทา
+            const stoneMat = new THREE.MeshLambertMaterial({ color: 0x828282 }); // สีฐานหิน
+            const darkMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a }); // สีความมืดภายในและหน้าต่าง
+            // วัสดุตาข่าย (ใช้ Wireframe เพื่อให้ดูเหมือนลวดกรงไก่)
+            const netMat = new THREE.MeshBasicMaterial({ color: 0x555555, wireframe: true, transparent: true, opacity: 0.7 });
+
+            const houseW = 1.4;
+            const houseD = 1.4;
             
-            const b1 = new THREE.Mesh(geo, mat);
-            b1.position.set(0, 0.25, 0);
-            b1.rotation.z = 0.2;
-            b1.castShadow = true;
+            // -------------------------------------------
+            // 2. ฐานหินและเสายกพื้น (Stilts & Stone Bases)
+            // -------------------------------------------
+            const createLeg = (x, z) => {
+                const legGroup = new THREE.Group();
+                // ฐานหิน
+                const stone = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.1, 0.2), stoneMat);
+                stone.position.set(x, 0.05, z);
+                stone.castShadow = true;
+                // เสาไม้
+                const post = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.4, 0.12), frameMat);
+                post.position.set(x, 0.25, z);
+                post.castShadow = true;
+                legGroup.add(stone, post);
+                return legGroup;
+            };
+
+            // เสาบ้านหลัก 4 ต้น
+            group.add(createLeg(-0.6, 0.6));
+            group.add(createLeg(0.6, 0.6));
+            group.add(createLeg(-0.6, -0.6));
+            group.add(createLeg(0.6, -0.6));
+
+            // พื้นบ้านหลัก
+            const floor = new THREE.Mesh(new THREE.BoxGeometry(houseW, 0.1, houseD), frameMat);
+            floor.position.set(0, 0.45, 0);
+            floor.castShadow = true;
+            group.add(floor);
+
+            // -------------------------------------------
+            // 3. ตัวบ้านหลัก (Main Cabin)
+            // -------------------------------------------
+            const cabin = new THREE.Mesh(new THREE.BoxGeometry(houseW, 0.8, houseD), woodMat);
+            cabin.position.set(0, 0.9, 0); // วางบนพื้น
+            cabin.castShadow = true; cabin.receiveShadow = true;
+            group.add(cabin);
+
+            // คานขอบบ้าน (Trim)
+            const trimL = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.8, 1.45), frameMat);
+            trimL.position.set(-0.7, 0.9, 0);
+            const trimR = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.8, 1.45), frameMat);
+            trimR.position.set(0.7, 0.9, 0);
+            group.add(trimL, trimR);
+
+            // ประตู (ใช้กล่องสีดำทับให้ดูเป็นช่องลึก)
+            const door = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.55, 0.05), darkMat);
+            door.position.set(0, 0.775, 0.71);
+            group.add(door);
+
+            // -------------------------------------------
+            // 4. หลังคาหลักและหน้าจั่ว (Main Roof & Gables)
+            // -------------------------------------------
+            // สร้างหน้าจั่ว (Gables) สามเหลี่ยม
+            const gableShape = new THREE.Shape();
+            gableShape.moveTo(-0.7, 0);
+            gableShape.lineTo(0.7, 0);
+            gableShape.lineTo(0, 0.6);
+            gableShape.lineTo(-0.7, 0);
+            const extrudeSettings = { depth: 0.1, bevelEnabled: false };
             
-            const b2 = new THREE.Mesh(geo, mat);
-            b2.position.set(0.1, 0.15, 0.1);
-            b2.rotation.z = -0.3;
-            b2.rotation.x = 0.2;
-            b2.castShadow = true;
+            const gableFront = new THREE.Mesh(new THREE.ExtrudeGeometry(gableShape, extrudeSettings), woodMat);
+            gableFront.position.set(0, 1.3, 0.6); // 1.3 คือความสูงขอบบนผนัง
+            const gableBack = new THREE.Mesh(new THREE.ExtrudeGeometry(gableShape, extrudeSettings), woodMat);
+            gableBack.position.set(0, 1.3, -0.7);
+            group.add(gableFront, gableBack);
+
+            // แผ่นหลังคาสีน้ำเงิน
+            const roofW = 0.95; // ความกว้างแผ่น
+            const roofD = 1.6; // ความลึกยื่นหน้า-หลัง
+            const roofThick = 0.08;
+            const roofAngle = Math.atan2(0.6, 0.7); // มุมลาดจั่ว
+
+            const roofLeft = new THREE.Mesh(new THREE.BoxGeometry(roofW, roofThick, roofD), roofBlueMat);
+            roofLeft.position.set(-0.42, 1.65, 0);
+            roofLeft.rotation.z = roofAngle;
+            roofLeft.castShadow = true;
+
+            const roofRight = new THREE.Mesh(new THREE.BoxGeometry(roofW, roofThick, roofD), roofBlueMat);
+            roofRight.position.set(0.42, 1.65, 0);
+            roofRight.rotation.z = -roofAngle;
+            roofRight.castShadow = true;
+            group.add(roofLeft, roofRight);
+
+            // ครอบสันหลังคา (Ridge Cap)
+            const ridge = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, roofD, 8), roofBlueMat);
+            ridge.position.set(0, 1.95, 0);
+            ridge.rotation.x = Math.PI / 2;
+            group.add(ridge);
+
+            // -------------------------------------------
+            // 5. รายละเอียดตกแต่ง (Props: Sign, Window, Ramp)
+            // -------------------------------------------
+            // ป้ายหน้าเล้าไก่
+            const sign = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.25, 0.05), woodMat);
+            sign.position.set(0, 1.4, 0.72);
+            // ลายไก่บนป้าย (กล่องทึบเล็กๆ แทนไอคอน)
+            const icon = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.06), frameMat);
+            icon.position.set(0, 1.4, 0.72);
+            group.add(sign, icon);
+
+            // หน้าต่างด้านหลัง
+            const winGrp = new THREE.Group();
+            const winHole = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.2, 0.05), darkMat);
+            const winFrame = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.25, 0.02), frameMat);
+            const winGrid = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.25, 0.06), frameMat); // แนวตั้ง
+            const winGrid2 = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.02, 0.06), frameMat); // แนวนอน
+            winGrp.add(winHole, winFrame, winGrid, winGrid2);
+            winGrp.position.set(0, 1.0, -0.71);
+            group.add(winGrp);
+
+            // บันไดทางลาด (Ramp)
+            const rampGroup = new THREE.Group();
+            const rampBoardL = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.9, 0.05), frameMat);
+            rampBoardL.position.set(-0.2, 0, 0);
+            const rampBoardR = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.9, 0.05), frameMat);
+            rampBoardR.position.set(0.2, 0, 0);
+            rampGroup.add(rampBoardL, rampBoardR);
+            // ขั้นบันได
+            for(let i=0; i<6; i++) {
+                const step = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.05, 0.02), woodMat);
+                step.position.set(0, -0.35 + (i*0.14), 0.02);
+                rampGroup.add(step);
+            }
+            rampGroup.position.set(0, 0.22, 1.05);
+            rampGroup.rotation.x = -Math.atan2(0.45, 0.7); // มุมลาด
+            rampGroup.children.forEach(c => c.castShadow = true);
+            group.add(rampGroup);
+
+            // -------------------------------------------
+            // 6. ส่วนต่อขยายตะแกรงด้านข้าง (Side Extension)
+            // -------------------------------------------
+            const extX = 1.25; // กึ่งกลางส่วนต่อขยาย (จาก 0.7 ถึง 1.8)
             
-            const b3 = new THREE.Mesh(geo, mat);
-            b3.position.set(-0.1, 0.2, -0.1);
-            b3.rotation.z = 0.1;
-            b3.rotation.x = -0.3;
-            b3.castShadow = true;
+            // เสาและฐานหินฝั่งขวาสุด
+            group.add(createLeg(1.7, 0.5));
+            group.add(createLeg(1.7, -0.5));
+
+            // โครงสร้างส่วนต่อขยาย
+            const extFrame1 = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.08, 0.08), frameMat); // ล่างหน้า
+            extFrame1.position.set(1.2, 0.45, 0.5);
+            const extFrame2 = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.08, 0.08), frameMat); // ล่างหลัง
+            extFrame2.position.set(1.2, 0.45, -0.5);
+            const extFrame3 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 1.0), frameMat); // ล่างขวา
+            extFrame3.position.set(1.7, 0.45, 0);
+            
+            const extBeamFront = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.08, 0.08), frameMat); // บนหน้า
+            extBeamFront.position.set(1.2, 0.85, 0.5);
+            extBeamFront.rotation.z = -0.25;
+            const extBeamBack = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.08, 0.08), frameMat); // บนหลัง
+            extBeamBack.position.set(1.2, 0.85, -0.5);
+            extBeamBack.rotation.z = -0.25;
+            const extBeamRight = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 1.0), frameMat); // บนขวา
+            extBeamRight.position.set(1.7, 0.75, 0);
+            
+            group.add(extFrame1, extFrame2, extFrame3, extBeamFront, extBeamBack, extBeamRight);
+
+            // หลังคาส่วนต่อขยาย (สีเทา)
+            const extRoof = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.05, 1.2), roofGreyMat);
+            extRoof.position.set(1.25, 0.95, 0);
+            extRoof.rotation.z = -0.25;
+            extRoof.castShadow = true;
+            group.add(extRoof);
+
+            // ตะแกรงลวด (Wireframe Nets)
+            // ใช้ PlaneGeometry กับวัสดุ wireframe เพื่อสร้างเส้นตาราง
+            const netFront = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.5, 12, 6), netMat);
+            netFront.position.set(1.2, 0.65, 0.5);
+            
+            const netBack = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.5, 12, 6), netMat);
+            netBack.position.set(1.2, 0.65, -0.5);
+
+            const netSide = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.3, 12, 4), netMat);
+            netSide.position.set(1.7, 0.6, 0);
+            netSide.rotation.y = Math.PI / 2;
+
+            group.add(netFront, netBack, netSide);
+
+            // -------------------------------------------
+            // 7. สเกลภาพรวม (Scaling)
+            // -------------------------------------------
+            // ลดขนาดภาพรวมลงเล็กน้อยเพื่อให้พอดีกับแปลงฟาร์มในเกม
+            group.scale.set(0.65, 0.65, 0.65);
+            
+            return group;
+        }
+
+
+
+
+
+
+
+
+function createCowShelter() {
+            const group = new THREE.Group();
+
+            // -------------------------------------------
+            // 1. กำหนดวัสดุและสี (Materials)
+            // -------------------------------------------
+            const woodMat = new THREE.MeshLambertMaterial({ color: 0x8b5a2b }); // สีไม้แผ่น (รั้ว, จั่ว, ป้าย)
+            const frameMat = new THREE.MeshLambertMaterial({ color: 0x5c3a21 }); // สีไม้โครงสร้างเสา (เข้ม)
+            const roofMat = new THREE.MeshLambertMaterial({ color: 0x5a3e2b }); // สีหลังคาไม้
+            const waterMat = new THREE.MeshLambertMaterial({ color: 0x3b82f6 }); // สีน้ำ (ฟ้า)
+            const metalMat = new THREE.MeshLambertMaterial({ color: 0x64748b }); // สีขอบอ่างน้ำ
+            const darkMat = new THREE.MeshLambertMaterial({ color: 0x2d1a11 }); // สีไอคอนวัว / ความมืด
+
+            const width = 2.2;
+            const depth = 2.2;
+            const postH = 1.0;
+            const roofH = 0.6; // ความสูงจากคานถึงยอดจั่ว
+
+            // -------------------------------------------
+            // 2. เสาและคาน (Posts & Beams)
+            // -------------------------------------------
+            const postGeo = new THREE.BoxGeometry(0.12, postH, 0.12);
+            
+            // เสามุม 4 ต้น และ เสากลาง 3 ต้น (เว้นด้านหน้าไว้ทำประตู)
+            const postPositions = [
+                [-1, -1], [1, -1], [-1, 1], [1, 1], // มุม
+                [-1, 0], [1, 0], [0, -1] // กลางซ้าย, กลางขวา, กลางหลัง
+            ];
+            
+            postPositions.forEach(pos => {
+                const p = new THREE.Mesh(postGeo, frameMat);
+                p.position.set(pos[0], postH/2, pos[1]);
+                p.castShadow = true;
+                group.add(p);
+            });
+
+            // คานบนรอบทิศ
+            const beamX = new THREE.BoxGeometry(2.12, 0.12, 0.12);
+            const beamZ = new THREE.BoxGeometry(0.12, 0.12, 2.12);
+            const b1 = new THREE.Mesh(beamX, frameMat); b1.position.set(0, postH, 1);
+            const b2 = new THREE.Mesh(beamX, frameMat); b2.position.set(0, postH, -1);
+            const b3 = new THREE.Mesh(beamZ, frameMat); b3.position.set(1, postH, 0);
+            const b4 = new THREE.Mesh(beamZ, frameMat); b4.position.set(-1, postH, 0);
+            group.add(b1, b2, b3, b4);
+
+            // ไม้ค้ำยันมุม (Braces) ด้านหน้า
+            const braceGeo = new THREE.BoxGeometry(0.08, 0.4, 0.08);
+            const braceFL = new THREE.Mesh(braceGeo, frameMat);
+            braceFL.position.set(-0.85, postH - 0.15, 1);
+            braceFL.rotation.z = -Math.PI / 4;
+            const braceFR = new THREE.Mesh(braceGeo, frameMat);
+            braceFR.position.set(0.85, postH - 0.15, 1);
+            braceFR.rotation.z = Math.PI / 4;
+            group.add(braceFL, braceFR);
+
+            // -------------------------------------------
+            // 3. จั่วและหลังคา (Gables & Roof)
+            // -------------------------------------------
+            const gableShape = new THREE.Shape();
+            gableShape.moveTo(-1.06, 0);
+            gableShape.lineTo(1.06, 0);
+            gableShape.lineTo(0, roofH);
+            gableShape.lineTo(-1.06, 0);
+            const gableGeo = new THREE.ExtrudeGeometry(gableShape, { depth: 0.05, bevelEnabled: false });
+            
+            // หน้าจั่ว
+            const gableFront = new THREE.Mesh(gableGeo, woodMat);
+            gableFront.position.set(0, postH, 1.0 - 0.025);
+            const gableBack = new THREE.Mesh(gableGeo, woodMat);
+            gableBack.position.set(0, postH, -1.0 - 0.025);
+            group.add(gableFront, gableBack);
+
+            // ขอบคานตกแต่งหน้าจั่ว (Gable Trim)
+            const trimGeo = new THREE.BoxGeometry(1.25, 0.08, 0.08);
+            const angle = Math.atan2(roofH, 1.06);
+            
+            const tFL = new THREE.Mesh(trimGeo, frameMat); tFL.position.set(-0.53, postH + roofH/2, 1.02); tFL.rotation.z = angle;
+            const tFR = new THREE.Mesh(trimGeo, frameMat); tFR.position.set(0.53, postH + roofH/2, 1.02); tFR.rotation.z = -angle;
+            const tBL = new THREE.Mesh(trimGeo, frameMat); tBL.position.set(-0.53, postH + roofH/2, -1.02); tBL.rotation.z = angle;
+            const tBR = new THREE.Mesh(trimGeo, frameMat); tBR.position.set(0.53, postH + roofH/2, -1.02); tBR.rotation.z = -angle;
+            group.add(tFL, tFR, tBL, tBR);
+
+            // แผ่นหลังคา
+            const roofPanelGeo = new THREE.BoxGeometry(1.4, 0.08, 2.4);
+            const roofL = new THREE.Mesh(roofPanelGeo, roofMat);
+            roofL.position.set(-0.6, postH + roofH/2 + 0.05, 0);
+            roofL.rotation.z = angle; roofL.castShadow = true;
+            const roofR = new THREE.Mesh(roofPanelGeo, roofMat);
+            roofR.position.set(0.6, postH + roofH/2 + 0.05, 0);
+            roofR.rotation.z = -angle; roofR.castShadow = true;
+            group.add(roofL, roofR);
+
+            // ครอบสันหลังคา
+            const ridge = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.1, 2.4), roofMat);
+            ridge.position.set(0, postH + roofH + 0.05, 0);
+            group.add(ridge);
+
+            // -------------------------------------------
+            // 4. ป้ายด้านหน้า (Sign)
+            // -------------------------------------------
+            const sign = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.3, 0.04), woodMat);
+            sign.position.set(0, postH + 0.25, 1.02);
+            
+            // ไอคอนรูปวัว (สัญลักษณ์กล่องดำ)
+            const iconBody = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.1, 0.05), darkMat);
+            iconBody.position.set(0, postH + 0.25, 1.03);
+            const iconHead = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.12, 0.05), darkMat);
+            iconHead.position.set(-0.12, postH + 0.28, 1.03);
+            group.add(sign, iconBody, iconHead);
+
+            // -------------------------------------------
+            // 5. รั้วคอกและประตู (Fences & Gate)
+            // -------------------------------------------
+            const railGeo = new THREE.BoxGeometry(2.0, 0.08, 0.04);
+            const railShort = new THREE.BoxGeometry(0.8, 0.08, 0.04);
+
+            const createFence = (x, z, rotY, isFront) => {
+                const fGroup = new THREE.Group();
+                if (isFront) {
+                    // รั้วซ้าย-ขวา
+                    const r1 = new THREE.Mesh(railShort, woodMat); r1.position.set(-0.6, 0.3, 0);
+                    const r2 = new THREE.Mesh(railShort, woodMat); r2.position.set(-0.6, 0.6, 0);
+                    const r3 = new THREE.Mesh(railShort, woodMat); r3.position.set(0.6, 0.3, 0);
+                    const r4 = new THREE.Mesh(railShort, woodMat); r4.position.set(0.6, 0.6, 0);
+                    
+                    // ประตูรั้วตรงกลาง
+                    const gate = new THREE.Group();
+                    const g1 = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.08, 0.04), woodMat); g1.position.set(0, 0.3, 0);
+                    const g2 = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.08, 0.04), woodMat); g2.position.set(0, 0.6, 0);
+                    const g3 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.6, 0.04), woodMat); g3.position.set(-0.25, 0.45, 0);
+                    const g4 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.6, 0.04), woodMat); g4.position.set(0.25, 0.45, 0);
+                    const gX = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.06, 0.05), woodMat); gX.position.set(0, 0.45, 0); gX.rotation.z = 0.6; // ลายทแยง
+                    gate.add(g1, g2, g3, g4, gX);
+                    gate.position.set(0, 0, 0);
+
+                    fGroup.add(r1, r2, r3, r4, gate);
+                } else {
+                    const r1 = new THREE.Mesh(railGeo, woodMat); r1.position.set(0, 0.3, 0);
+                    const r2 = new THREE.Mesh(railGeo, woodMat); r2.position.set(0, 0.6, 0);
+                    fGroup.add(r1, r2);
+                }
+                fGroup.position.set(x, 0, z);
+                fGroup.rotation.y = rotY;
+                return fGroup;
+            };
+
+            group.add(createFence(0, -1, 0, false)); // รั้วหลัง
+            group.add(createFence(-1, 0, Math.PI/2, false)); // รั้วซ้าย
+            group.add(createFence(1, 0, Math.PI/2, false)); // รั้วขวา
+            group.add(createFence(0, 1, 0, true)); // รั้วหน้า (มีประตู)
+
+            // -------------------------------------------
+            // 6. อุปกรณ์ให้อาหารและน้ำ (Troughs)
+            // -------------------------------------------
+            // รางหญ้าไม้ยาว (วางขนาบรั้วซ้าย)
+            const troughL = new THREE.Group();
+            const tBase = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.2, 0.35), woodMat);
+            tBase.position.set(0, 0.1, 0);
+            const tHole = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.2, 0.25), darkMat);
+            tHole.position.set(0, 0.15, 0);
+            troughL.add(tBase, tHole);
+            troughL.position.set(-1.15, 0, 0);
+            troughL.rotation.y = Math.PI/2;
+            group.add(troughL);
+
+            // อ่างน้ำสีฟ้า (วางหน้าขวา)
+            const waterTrough = new THREE.Group();
+            const wBase = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.25, 0.4), metalMat); 
+            wBase.position.set(0, 0.125, 0);
+            const wWater = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.2, 0.35), waterMat); 
+            wWater.position.set(0, 0.15, 0);
+            waterTrough.add(wBase, wWater);
+            waterTrough.position.set(0.8, 0, 1.15); // ยื่นออกมาหน้าขวาเล็กน้อย
+            group.add(waterTrough);
+
+            // พื้นดินข้างในคอก
+            const floor = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.05, 2.0), new THREE.MeshLambertMaterial({color: 0x5c4033}));
+            floor.position.set(0, 0.025, 0);
+            group.add(floor);
+
+            group.scale.set(0.8, 0.8, 0.8);
+
+            return group;
+        }
+
+
+
+
+
+
+
+
+
+
+
+// ==========================================
+        // OPTIMIZATION: โหลด Material & Geometry ครั้งเดียวใช้ซ้ำ
+        // ==========================================
+        const optMats = {
+            grass: new THREE.MeshLambertMaterial({ color: 0x4ade80 }),
+            cornStalk: new THREE.MeshLambertMaterial({ color: 0x4a8522 }),
+            cornLeaf: new THREE.MeshLambertMaterial({ color: 0x5a9a2a }),
+            cornCob: new THREE.MeshLambertMaterial({ color: 0xffcc00 }),
+            cornHusk: new THREE.MeshLambertMaterial({ color: 0x6b9e32 }),
+            cornSilk: new THREE.MeshLambertMaterial({ color: 0x8b5a2b }),
+            cornTassel: new THREE.MeshLambertMaterial({ color: 0xdeb887 }),
+            wheatLeaf: new THREE.MeshLambertMaterial({ color: 0x5a9a2a }),
+            wheatSeed: new THREE.MeshLambertMaterial({ color: 0xebb734 }),
+            oatLeaf: new THREE.MeshLambertMaterial({ color: 0x6b8e23 }),
+            oatSeed: new THREE.MeshLambertMaterial({ color: 0xd2b48c }), 
+            soyStalk: new THREE.MeshLambertMaterial({ color: 0x82a83e }),
+            soyLeaf: new THREE.MeshLambertMaterial({ color: 0x4a8222 }),
+            soyPod: new THREE.MeshLambertMaterial({ color: 0xadb545 })
+        };
+
+        const optGeos = {
+            grass: new THREE.ConeGeometry(0.1, 0.5, 3), // 3 เหลี่ยมพอสำหรับหญ้า
+            // ข้าวโพด
+            cornStalk: new THREE.CylinderGeometry(0.035, 0.07, 1.8, 5),
+            cornBaseLeaf: new THREE.ConeGeometry(0.08, 0.45, 4).translate(0, 0.225, 0),
+            cornTipLeaf: new THREE.ConeGeometry(0.06, 0.55, 4).translate(0, 0.275, 0),
+            cornCob: new THREE.SphereGeometry(0.06, 6, 6),
+            cornSilk: new THREE.ConeGeometry(0.025, 0.12, 3),
+            cornHusk: new THREE.ConeGeometry(0.06, 0.3, 4).translate(0, 0.15, 0),
+            cornTassel: new THREE.CylinderGeometry(0.005, 0.015, 0.3, 3).translate(0, 0.15, 0),
+            // ข้าวสาลี & ข้าวโอ๊ต
+            wheatLeaf: new THREE.ConeGeometry(0.025, 0.7, 3).translate(0, 0.35, 0),
+            wheatStem: new THREE.CylinderGeometry(0.01, 0.015, 0.7, 3).translate(0, 0.35, 0),
+            wheatSeedBase: new THREE.CylinderGeometry(0.02, 0.05, 0.35, 4, 2).translate(0, 0.175, 0),
+            wheatSeedOverlay: new THREE.CylinderGeometry(0.03, 0.04, 0.3, 4, 1),
+            oatLeaf: new THREE.ConeGeometry(0.02, 0.6, 3).translate(0, 0.3, 0),
+            oatStemBase: new THREE.CylinderGeometry(0.008, 0.012, 1.0, 3).translate(0, 0.5, 0), // ใช้การยืด Scale แทน
+            oatSeed: new THREE.ConeGeometry(0.015, 0.08, 3),
+            // ถั่วเหลือง
+            soyStalk: new THREE.CylinderGeometry(0.015, 0.03, 1.3, 5),
+            soyLeaf: new THREE.SphereGeometry(0.06, 6, 6).translate(0, 0.06, 0),
+            soyPod: new THREE.SphereGeometry(0.022, 5, 5),
+            soyStemBase: new THREE.CylinderGeometry(0.006, 0.01, 1.0, 3).translate(0, 0.5, 0)
+        };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       function createGrassModel() {
+            const group = new THREE.Group();
+            
+            const b1 = new THREE.Mesh(optGeos.grass, optMats.grass);
+            b1.position.set(0, 0.25, 0); b1.rotation.z = 0.2;
+            
+            const b2 = new THREE.Mesh(optGeos.grass, optMats.grass);
+            b2.position.set(0.1, 0.15, 0.1); b2.rotation.z = -0.3; b2.rotation.x = 0.2;
+            
+            const b3 = new THREE.Mesh(optGeos.grass, optMats.grass);
+            b3.position.set(-0.1, 0.2, -0.1); b3.rotation.z = 0.1; b3.rotation.x = -0.3;
             
             group.add(b1, b2, b3);
             
@@ -1924,111 +2572,261 @@
         }
 
 
+function createCrop(type, x, z) {
+            const group = new THREE.Group();
+            group.userData = { x, z, type };
+
+            if (type === 'oat') {
+                const stalkCount = 6;
+                for (let i = 0; i < stalkCount; i++) {
+                    const stalkGroup = new THREE.Group();
+                    stalkGroup.rotation.y = (Math.PI * 2 / stalkCount) * i + (Math.random() * 0.5);
+
+                    for(let j = 0; j < 3; j++) {
+                        const leaf = new THREE.Mesh(optGeos.oatLeaf, optMats.oatLeaf);
+                        leaf.rotation.x = 0.2 + (Math.random() * 0.4); 
+                        leaf.rotation.y = Math.random() * Math.PI * 2;
+                        leaf.scale.set(1, 1, 0.15); 
+                        stalkGroup.add(leaf);
+                    }
+
+                    const stemHeight = 0.65 + Math.random() * 0.15;
+                    const stem = new THREE.Mesh(optGeos.oatStemBase, optMats.oatLeaf);
+                    stem.scale.y = stemHeight; 
+                    stem.rotation.x = 0.15; 
+                    stalkGroup.add(stem);
+
+                    const headGroup = new THREE.Group();
+                    headGroup.position.set(0, stemHeight * 0.9, 0.05);
+                    headGroup.rotation.x = 1.2; 
+                    
+                    for(let p = 0; p < 5; p++) {
+                        const seed = new THREE.Mesh(optGeos.oatSeed, optMats.oatSeed);
+                        seed.position.set((Math.random() - 0.5) * 0.1, Math.random() * 0.15, (Math.random() - 0.5) * 0.1);
+                        seed.rotation.x = Math.PI - 0.2 + (Math.random() * 0.4);
+                        seed.rotation.z = (Math.random() - 0.5) * 0.5;
+                        headGroup.add(seed);
+                    }
+                    stalkGroup.add(headGroup);
+                    stalkGroup.position.set((Math.random() - 0.5) * 0.15, 0, (Math.random() - 0.5) * 0.15);
+                    group.add(stalkGroup);
+                }
+            } 
+            else if (type === 'wheat') {
+                const stalkCount = 7;
+                for (let i = 0; i < stalkCount; i++) {
+                    const stalkGroup = new THREE.Group();
+                    stalkGroup.rotation.y = (Math.PI * 2 / stalkCount) * i + (Math.random() * 0.5);
+
+                    for(let j = 0; j < 3; j++) {
+                        const leaf = new THREE.Mesh(optGeos.wheatLeaf, optMats.wheatLeaf);
+                        leaf.rotation.x = 0.2 + (Math.random() * 0.4); 
+                        leaf.rotation.y = Math.random() * Math.PI * 2;
+                        leaf.scale.set(1, 1, 0.2); 
+                        stalkGroup.add(leaf);
+                    }
+
+                    const stem = new THREE.Mesh(optGeos.wheatStem, optMats.wheatLeaf);
+                    stem.rotation.x = 0.25; 
+                    stalkGroup.add(stem);
+
+                    const headGroup = new THREE.Group();
+                    headGroup.position.set(0, 0.68, 0.17); 
+                    headGroup.rotation.x = 2.2; 
+                    
+                    const seeds = new THREE.Mesh(optGeos.wheatSeedBase, optMats.wheatSeed);
+                    const seedsOverlay = new THREE.Mesh(optGeos.wheatSeedOverlay, optMats.wheatSeed);
+                    seedsOverlay.position.y = 0.15;
+                    seedsOverlay.rotation.y = Math.PI / 4;
+                    
+                    headGroup.add(seeds, seedsOverlay);
+                    stalkGroup.add(headGroup);
+                    stalkGroup.position.set((Math.random() - 0.5) * 0.15, 0, (Math.random() - 0.5) * 0.15);
+                    group.add(stalkGroup);
+                }
+            } 
+            else if (type === 'barley') {
+                const positions = [ {x: -0.2, z: -0.2}, {x: 0.2, z: 0.1}, {x: -0.1, z: 0.3} ];
+                positions.forEach(pos => {
+                    const stalk = new THREE.Mesh(sharedGeos.stalkNorm, sharedMats.green);
+                    stalk.position.set(pos.x, 0.25, pos.z);
+                    stalk.castShadow = true;
+                    group.add(stalk);
+                    
+                    const head = new THREE.Mesh(sharedGeos.headNorm, sharedMats.barley);
+                    head.position.set(pos.x, 0.65, pos.z);
+                    group.add(head);
+                });
+            } 
+            else if (type === 'corn') {
+                const stalk = new THREE.Mesh(optGeos.cornStalk, optMats.cornStalk);
+                stalk.position.set(0, 0.9, 0); // 1.8 / 2
+                stalk.castShadow = true; // เปิดเงาเฉพาะแกนกลางข้าวโพด
+                group.add(stalk);
+
+                for (let i = 0; i < 6; i++) {
+                    const leafGroup = new THREE.Group();
+                    
+                    const leafBase = new THREE.Mesh(optGeos.cornBaseLeaf, optMats.cornLeaf);
+                    leafBase.scale.set(1.2, 1, 0.1); 
+                    
+                    const leafTip = new THREE.Mesh(optGeos.cornTipLeaf, optMats.cornLeaf);
+                    leafTip.scale.set(0.7, 1, 1); 
+                    leafTip.position.set(0, 0.45, 0); 
+
+                    leafBase.rotation.z = 0.5 + (i * 0.08);
+                    leafTip.rotation.z = 0.8 + (i * 0.15);
+                    
+                    leafBase.add(leafTip);
+                    leafGroup.add(leafBase);
+
+                    leafGroup.position.set(0, 0.2 + (i * 0.25), 0);
+                    leafGroup.rotation.y = (i % 2 === 0) ? 0 : Math.PI;
+                    leafGroup.rotation.y += (Math.random() - 0.5) * 0.3;
+                    
+                    group.add(leafGroup);
+                }
+
+                const createCob = (yPos, rotY) => {
+                    const cobGroup = new THREE.Group();
+                    const cob = new THREE.Mesh(optGeos.cornCob, optMats.cornCob);
+                    cob.scale.set(1, 2.8, 1);
+                    cob.position.set(0, 0.15, 0);
+                    cobGroup.add(cob);
+                    
+                    const silk = new THREE.Mesh(optGeos.cornSilk, optMats.cornSilk);
+                    silk.position.set(0, 0.35, 0);
+                    silk.rotation.z = 0.2; 
+                    cobGroup.add(silk);
+
+                    const h1 = new THREE.Mesh(optGeos.cornHusk, optMats.cornHusk);
+                    h1.scale.set(1.3, 1, 0.2); h1.rotation.z = 0.25; h1.position.set(-0.02, 0, 0);
+                    const h2 = new THREE.Mesh(optGeos.cornHusk, optMats.cornHusk);
+                    h2.scale.set(1.3, 1, 0.2); h2.rotation.z = -0.25; h2.position.set(0.02, 0, 0);
+                    const h3 = new THREE.Mesh(optGeos.cornHusk, optMats.cornHusk);
+                    h3.scale.set(1.3, 1, 0.2); h3.rotation.x = 0.25; h3.position.set(0, 0, 0.03);
+                    
+                    cobGroup.add(h1, h2, h3);
+                    cobGroup.position.set(0, yPos, 0);
+                    cobGroup.rotation.y = rotY;
+                    cobGroup.rotation.z = Math.PI / 6; 
+                    return cobGroup;
+                };
+
+                group.add(createCob(0.65, 0));            
+                group.add(createCob(0.85, Math.PI));      
+
+                const tasselGroup = new THREE.Group();
+                tasselGroup.add(new THREE.Mesh(optGeos.cornTassel, optMats.cornTassel));
+                for (let i = 0; i < 5; i++) {
+                    const branch = new THREE.Mesh(optGeos.cornTassel, optMats.cornTassel);
+                    branch.rotation.z = 0.4 + (Math.random() * 0.2);
+                    branch.rotation.y = (Math.PI * 2 / 5) * i;
+                    tasselGroup.add(branch);
+                }
+                tasselGroup.position.set(0, 1.75, 0);
+                group.add(tasselGroup);
+                
+                group.scale.set(0.5, 0.5, 0.5);
+            } 
+            else if (type === 'soybean') {
+                const stalk = new THREE.Mesh(optGeos.soyStalk, optMats.soyStalk);
+                stalk.position.set(0, 0.65, 0);
+                stalk.castShadow = true; // เปิดเงาเฉพาะแกนกลาง
+                group.add(stalk);
+
+                const createLeafCluster = () => {
+                    const cluster = new THREE.Group();
+                    const l1 = new THREE.Mesh(optGeos.soyLeaf, optMats.soyLeaf);
+                    l1.scale.set(1.2, 1.8, 0.1); l1.rotation.x = Math.PI / 2;
+                    const l2 = new THREE.Mesh(optGeos.soyLeaf, optMats.soyLeaf);
+                    l2.scale.set(1.02, 1.53, 0.1); l2.position.set(-0.015, 0, -0.015); l2.rotation.set(Math.PI / 2, 0, Math.PI / 3.5);
+                    const l3 = new THREE.Mesh(optGeos.soyLeaf, optMats.soyLeaf);
+                    l3.scale.set(1.02, 1.53, 0.1); l3.position.set(0.015, 0, -0.015); l3.rotation.set(Math.PI / 2, 0, -Math.PI / 3.5);
+                    cluster.add(l1, l2, l3);
+                    return cluster;
+                };
+
+                const createBranch = (yPos, angleY, length, podQty) => {
+                    const branchGroup = new THREE.Group();
+                    branchGroup.position.set(0, yPos, 0);
+                    branchGroup.rotation.y = angleY;
+
+                    const stemHolder = new THREE.Group();
+                    stemHolder.rotation.x = 1.1; 
+                    branchGroup.add(stemHolder);
+
+                    const stem = new THREE.Mesh(optGeos.soyStemBase, optMats.soyStalk);
+                    stem.scale.y = length;
+                    stemHolder.add(stem);
+
+                    const leafCluster = createLeafCluster();
+                    leafCluster.position.set(0, length, 0);
+                    leafCluster.rotation.x = -0.5; 
+                    stemHolder.add(leafCluster);
+
+                    for (let j = 0; j < podQty; j++) {
+                        const pod = new THREE.Mesh(optGeos.soyPod, optMats.soyPod);
+                        pod.scale.set(0.8, 2.5, 0.6); 
+                        pod.position.set((Math.random() - 0.5) * 0.06, -0.03 - (Math.random() * 0.06), 0.03 + (Math.random() * 0.04));
+                        pod.rotation.set(Math.PI - 0.2 + (Math.random() * 0.4), 0, (Math.random() - 0.5) * 0.5);
+                        branchGroup.add(pod);
+                    }
+                    return branchGroup;
+                };
+
+                const tiers = 4;
+                for (let i = 0; i < tiers; i++) {
+                    const y = 0.25 + (i * 0.25);
+                    const branchLen = 0.35 - (i * 0.05); 
+                    const angleOffset = (i % 2 === 0) ? 0 : Math.PI / 2; 
+                    const pods = (i < tiers - 1) ? (3 + Math.floor(Math.random() * 2)) : 0; 
+                    group.add(createBranch(y, angleOffset, branchLen, pods));
+                    group.add(createBranch(y, angleOffset + Math.PI, branchLen, pods));
+                }
+
+                const topCluster = createLeafCluster();
+                topCluster.position.set(0, 1.28, 0);
+                topCluster.scale.set(0.9, 0.9, 0.9);
+                topCluster.rotation.x = 0.2; 
+                group.add(topCluster);
+            }
+            
+            group.position.set(x, 0, z);
+            return group;
+        }
 
 
 
-  function createCrop(type, x, z) {
-    const group = new THREE.Group();
-    group.userData = { x, z, type };
 
-    // 1. โมเดลข้าวโอ๊ต (Oat) - ปรับเป็นกอคล้ายหญ้า
-    if (type === 'oat') {
-        const bladeGeo = new THREE.ConeGeometry(0.08, 0.6, 4); // ทรงเรียวแหลมคล้ายใบหญ้า
-        const mat = sharedMats.oat; // ใช้สีข้าวโอ๊ตเพื่อให้เข้ากับชนิดพืช
-        
-        // กำหนดตำแหน่งและองศาของใบแต่ละใบให้ออกมาเป็น "กอ"
-        const bladesData = [
-            { x: 0, z: 0, rx: 0, rz: 0, scaleY: 1.2 },        // ตรงกลาง (สูงสุด)
-            { x: 0.12, z: 0.12, rx: 0.3, rz: -0.3, scaleY: 0.8 }, // เฉียงขวาหน้า
-            { x: -0.12, z: 0.12, rx: 0.3, rz: 0.3, scaleY: 0.9 }, // เฉียงซ้ายหน้า
-            { x: 0.12, z: -0.12, rx: -0.3, rz: -0.3, scaleY: 0.9 }, // เฉียงขวาหลัง
-            { x: -0.12, z: -0.12, rx: -0.3, rz: 0.3, scaleY: 0.8 }  // เฉียงซ้ายหลัง
-        ];
 
-        bladesData.forEach(b => {
-            const blade = new THREE.Mesh(bladeGeo, mat);
-            blade.position.set(b.x, (0.6 * b.scaleY) / 2, b.z);
-            blade.scale.y = b.scaleY;
-            blade.rotation.x = b.rx;
-            blade.rotation.z = b.rz;
-            blade.castShadow = true;
-            group.add(blade);
-        });
-    } 
-    // 2. โมเดลข้าวสาลีและบาร์เลย์ (คงรูปแบบเดิมที่มีรวงข้าว)
-    else if (type === 'wheat' || type === 'barley') {
-        let hMat = type === 'wheat' ? sharedMats.wheat : sharedMats.barley; 
-        
-        const positions = [ {x: -0.2, z: -0.2}, {x: 0.2, z: 0.1}, {x: -0.1, z: 0.3} ];
-        positions.forEach(pos => {
-            const stalk = new THREE.Mesh(sharedGeos.stalkNorm, sharedMats.green);
-            stalk.position.set(pos.x, 0.25, pos.z);
-            stalk.castShadow = true;
-            group.add(stalk);
-            const head = new THREE.Mesh(sharedGeos.headNorm, hMat);
-            head.position.set(pos.x, 0.65, pos.z);
-            head.castShadow = true;
-            group.add(head);
-        });
-    } 
-   // 3. โมเดลข้าวโพด (เพิ่มใบ 2 ใบ)
-    else if (type === 'corn') {
-        // ลำต้น
-        const stalk = new THREE.Mesh(sharedGeos.cornStalk, sharedMats.green);
-        stalk.position.set(0, 0.6, 0);
-        stalk.castShadow = true;
-        group.add(stalk);
-        
-        // ฝักข้าวโพดฝักที่ 1
-        const cob1 = new THREE.Mesh(sharedGeos.cornCob, sharedMats.cornYellow);
-        cob1.position.set(0.08, 0.5, 0.08);
-        cob1.rotation.z = -Math.PI / 4;
-        group.add(cob1);
-        
-        // ฝักข้าวโพดฝักที่ 2
-        const cob2 = new THREE.Mesh(sharedGeos.cornCob, sharedMats.cornYellow);
-        cob2.position.set(-0.08, 0.8, -0.08);
-        cob2.rotation.z = Math.PI / 4;
-        group.add(cob2);
 
-        // --- เพิ่มใบข้าวโพด 2 ใบ ---
-        const leafGeo = new THREE.ConeGeometry(0.06, 0.6, 3); // รูปทรงใบเรียวแหลม
-        
-        // ใบที่ 1 (ช่วงกลางลำต้น ยื่นไปทางขวา)
-        const leaf1 = new THREE.Mesh(leafGeo, sharedMats.green);
-        leaf1.position.set(0.15, 0.35, -0.05);
-        leaf1.rotation.z = -Math.PI / 3; // เอียงลงด้านขวา
-        leaf1.rotation.x = -0.2; // บิดไปด้านหลังนิดๆ
-        leaf1.castShadow = true;
-        group.add(leaf1);
 
-        // ใบที่ 2 (ช่วงบนลำต้น ยื่นไปทางซ้าย)
-        const leaf2 = new THREE.Mesh(leafGeo, sharedMats.green);
-        leaf2.position.set(-0.15, 0.75, 0.05);
-        leaf2.rotation.z = Math.PI / 3;  // เอียงลงด้านซ้าย
-        leaf2.rotation.x = 0.2;  // บิดมาด้านหน้านิดๆ
-        leaf2.castShadow = true;
-        group.add(leaf2);
-    }
-	
-	
-	
-	
-    // 4. โมเดลถั่วเหลือง
-    else if (type === 'soybean') {
-        const stalk = new THREE.Mesh(sharedGeos.soyStalk, sharedMats.darkGreen);
-        stalk.position.set(0, 0.2, 0);
-        group.add(stalk);
-        
-        const bush = new THREE.Mesh(sharedGeos.soyBush, sharedMats.soybean);
-        bush.position.set(0, 0.4, 0);
-        bush.castShadow = true;
-        group.add(bush);
-    }
-    
-    group.position.set(x, 0, z);
-    return group;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2137,114 +2935,546 @@ function createPlotFence(isOwned, isLivestock = false) {
 		
 		
 		
-
-        function createCarModel(colorHex) {
+		
+		
+		
+		
+		
+		
+		
+function createCarModel(colorHex) {
             const carGroup = new THREE.Group();
+
+            // สร้างกรุ๊ปย่อยสำหรับตัวถังรถ เพื่อหมุน 90 องศาให้หันไปทางแกน X (ด้านหน้า)
+            const innerGroup = new THREE.Group();
+            innerGroup.rotation.y = Math.PI / 2;
+            carGroup.add(innerGroup);
+
+            // -------------------------------------------
+            // 1. กำหนดวัสดุและสี (Materials)
+            // -------------------------------------------
+            const bodyMat = new THREE.MeshLambertMaterial({ color: 0xf8fafc }); // สีขาว (ตัวถังหลัก)
+            const accentMat = new THREE.MeshLambertMaterial({ color: colorHex }); // สีประจำรุ่น
+            const darkMat = new THREE.MeshLambertMaterial({ color: 0x1f2937 }); // สีเทาดำ
+            const frameMat = new THREE.MeshLambertMaterial({ color: 0x334155 }); // สีเหล็ก/โครงสร้าง
+            const glassMat = new THREE.MeshLambertMaterial({ color: 0x0f172a }); // สีหน้าจอ/กระจก
+            const lightMat = new THREE.MeshLambertMaterial({ color: 0xfef08a, emissive: 0xfef08a, emissiveIntensity: 0.8 }); // ไฟหน้า
+            const redLightMat = new THREE.MeshLambertMaterial({ color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 0.8 }); // ไฟท้าย
+
+            const baseH = 0.35; 
+
+            // -------------------------------------------
+            // 2. ตัวถังหลัก (Main Body)
+            // -------------------------------------------
+            const lowerBody = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.2, 0.8), darkMat);
+            lowerBody.position.set(0, baseH + 0.1, -0.1);
             
-            const bodyMat = new THREE.MeshLambertMaterial({ color: colorHex }); 
-            const bodyGeo = new THREE.BoxGeometry(0.7, 0.3, 0.5);
-            const body = new THREE.Mesh(bodyGeo, bodyMat);
-            body.position.y = 0.35;
-            body.castShadow = true;
-            carGroup.add(body);
+            const mainBody = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.4, 0.8), bodyMat);
+            mainBody.position.set(0, baseH + 0.4, -0.1);
 
-            const headMat = new THREE.MeshLambertMaterial({ color: 0x1f2937 });
-            const headGeo = new THREE.BoxGeometry(0.3, 0.2, 0.3);
-            const head = new THREE.Mesh(headGeo, headMat);
-            head.position.set(0.2, 0.55, 0);
-            carGroup.add(head);
+            const noseGeo = new THREE.BoxGeometry(0.7, 0.25, 0.3);
+            const nose = new THREE.Mesh(noseGeo, bodyMat);
+            nose.position.set(0, baseH + 0.3, 0.35);
+            nose.rotation.x = 0.4; 
 
-            const eyeMat = new THREE.MeshLambertMaterial({ color: 0x22c55e, emissive: 0x22c55e, emissiveIntensity: 0.5 });
-            const eye = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.15), eyeMat);
-            eye.position.set(0.36, 0.55, 0);
-            carGroup.add(eye);
+            // Add เข้า innerGroup แทน carGroup
+            innerGroup.add(lowerBody, mainBody, nose);
 
-            const scissorMat = new THREE.MeshLambertMaterial({ color: 0x94a3b8 });
-            const scissorGeo = new THREE.BoxGeometry(0.5, 0.05, 0.1);
+            // -------------------------------------------
+            // 3. แผงด้านข้าง (Side Panels & Decals)
+            // -------------------------------------------
+            const panelGeo = new THREE.BoxGeometry(0.72, 0.15, 0.6);
+            const panel = new THREE.Mesh(panelGeo, accentMat);
+            panel.position.set(0, baseH + 0.32, -0.15);
             
-            const scissorL = new THREE.Mesh(scissorGeo, scissorMat);
-            scissorL.position.set(0.5, 0.3, 0.15);
-            scissorL.rotation.y = -Math.PI / 6;
-            scissorL.name = "scissorL";
-            scissorL.castShadow = true;
-            carGroup.add(scissorL);
-
-            const scissorR = new THREE.Mesh(scissorGeo, scissorMat);
-            scissorR.position.set(0.5, 0.3, -0.15);
-            scissorR.rotation.y = Math.PI / 6;
-            scissorR.name = "scissorR";
-            scissorR.castShadow = true;
-            carGroup.add(scissorR);
-
-            const legMat = new THREE.MeshLambertMaterial({ color: 0x475569 });
-            const legGeo = new THREE.BoxGeometry(0.1, 0.4, 0.1);
+            const logoGeo = new THREE.BoxGeometry(0.725, 0.08, 0.3);
+            const logo = new THREE.Mesh(logoGeo, darkMat);
+            logo.position.set(0, baseH + 0.35, -0.15);
             
-            const legPositions = [
-                { x: 0.2, z: 0.25, name: "leg_R1", rotX: -Math.PI/6 },
-                { x: -0.1, z: 0.25, name: "leg_R2", rotX: -Math.PI/6 },
-                { x: -0.4, z: 0.25, name: "leg_R3", rotX: -Math.PI/6 },
-                { x: 0.2, z: -0.25, name: "leg_L1", rotX: Math.PI/6 },
-                { x: -0.1, z: -0.25, name: "leg_L2", rotX: Math.PI/6 },
-                { x: -0.4, z: -0.25, name: "leg_L3", rotX: Math.PI/6 }
-            ];
+            innerGroup.add(panel, logo);
 
-            legPositions.forEach((pos) => {
-                const legGroup = new THREE.Group(); 
-                legGroup.position.set(pos.x, 0.3, pos.z);
+            // -------------------------------------------
+            // 4. ห้องควบคุมและเบาะนั่ง (Cabin & Seat)
+            // -------------------------------------------
+            const seatBase = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.1, 0.3), darkMat);
+            seatBase.position.set(0, baseH + 0.65, 0.05);
+            const seatBack = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.1), darkMat);
+            seatBack.position.set(0, baseH + 0.8, -0.1);
+            
+            const consoleGeo = new THREE.BoxGeometry(0.4, 0.25, 0.2);
+            const controlConsole = new THREE.Mesh(consoleGeo, bodyMat);
+            controlConsole.position.set(0, baseH + 0.65, 0.3);
+            
+            const screen = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.15, 0.05), glassMat);
+            screen.position.set(0, baseH + 0.7, 0.25);
+            screen.rotation.x = -0.5;
+
+            const stick = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.2), darkMat);
+            stick.position.set(0, baseH + 0.75, 0.25);
+            stick.rotation.x = -0.3;
+
+            innerGroup.add(seatBase, seatBack, controlConsole, screen, stick);
+
+            // -------------------------------------------
+            // 5. หลังคากันแดด และ GPS (Canopy & GPS Dome)
+            // -------------------------------------------
+            const canopyRoof = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.05, 0.8), darkMat);
+            canopyRoof.position.set(0, baseH + 1.15, -0.05);
+            
+            const postGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.55);
+            const p1 = new THREE.Mesh(postGeo, frameMat); p1.position.set(0.3, baseH + 0.9, 0.1);
+            const p2 = new THREE.Mesh(postGeo, frameMat); p2.position.set(-0.3, baseH + 0.9, 0.1);
+            const p3 = new THREE.Mesh(postGeo, frameMat); p3.position.set(0.3, baseH + 0.9, -0.2);
+            const p4 = new THREE.Mesh(postGeo, frameMat); p4.position.set(-0.3, baseH + 0.9, -0.2);
+
+            const gpsMast = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.15), frameMat);
+            gpsMast.position.set(0, baseH + 1.2, -0.05);
+            const gpsDome = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.04, 12), bodyMat);
+            gpsDome.position.set(0, baseH + 1.28, -0.05);
+            const gpsTop = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.02, 12), glassMat);
+            gpsTop.position.set(0, baseH + 1.3, -0.05);
+
+            innerGroup.add(canopyRoof, p1, p2, p3, p4, gpsMast, gpsDome, gpsTop);
+
+            // -------------------------------------------
+            // 6. ชุดหัวเกี่ยวข้าว (Front Harvester Header)
+            // -------------------------------------------
+            const headerGroup = new THREE.Group();
+            headerGroup.position.set(0, baseH - 0.15, 0.55);
+
+            const connector = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.2, 0.2), frameMat);
+            connector.position.set(0, 0.1, -0.1);
+            headerGroup.add(connector);
+
+            const headerFrame = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.15, 0.3), frameMat);
+            headerFrame.position.set(0, 0, 0.15);
+            headerGroup.add(headerFrame);
+
+            const guardGeo = new THREE.BoxGeometry(0.1, 0.35, 0.4);
+            const guardL = new THREE.Mesh(guardGeo, bodyMat);
+            guardL.position.set(0.75, 0.15, 0.2);
+            const guardR = new THREE.Mesh(guardGeo, bodyMat);
+            guardR.position.set(-0.75, 0.15, 0.2);
+
+            const guardAccentGeo = new THREE.BoxGeometry(0.11, 0.1, 0.35);
+            const gAccL = new THREE.Mesh(guardAccentGeo, accentMat);
+            gAccL.position.set(0.75, 0.1, 0.25); gAccL.rotation.x = 0.3;
+            const gAccR = new THREE.Mesh(guardAccentGeo, accentMat);
+            gAccR.position.set(-0.75, 0.1, 0.25); gAccR.rotation.x = 0.3;
+
+            headerGroup.add(guardL, guardR, gAccL, gAccR);
+
+            const reel = new THREE.Group();
+            const centerCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.4, 8), darkMat);
+            centerCyl.rotation.z = Math.PI / 2;
+            reel.add(centerCyl);
+
+            const bladeGeo = new THREE.BoxGeometry(1.4, 0.02, 0.35);
+            const b1a = new THREE.Mesh(bladeGeo, darkMat); b1a.rotation.x = 0;
+            const b2a = new THREE.Mesh(bladeGeo, darkMat); b2a.rotation.x = Math.PI / 3;
+            const b3a = new THREE.Mesh(bladeGeo, darkMat); b3a.rotation.x = -Math.PI / 3;
+            reel.add(b1a, b2a, b3a);
+            
+            reel.position.set(0, 0.15, 0.25);
+            headerGroup.add(reel);
+
+            for(let i = -0.65; i <= 0.65; i += 0.08) {
+                const tine = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.2), frameMat);
+                tine.position.set(i, -0.08, 0.35);
+                tine.rotation.x = 0.2;
+                headerGroup.add(tine);
+            }
+            innerGroup.add(headerGroup);
+
+            // -------------------------------------------
+            // 7. ขาแมงมุม 6 ขา (Robotic Spider Legs)
+            // -------------------------------------------
+            const createSpiderLeg = (name, x, z, isLeft, rotY) => {
+                const legGroup = new THREE.Group();
+                legGroup.name = name; 
                 
-                const leg = new THREE.Mesh(legGeo, legMat);
-                leg.position.set(0, -0.15, pos.z > 0 ? 0.1 : -0.1);
-                leg.rotation.x = pos.rotX;
-                leg.castShadow = true;
+                // สลับพิกัด X และ Z เพื่อให้เข้ากับการหมุน 90 องศาของตัวถัง
+                legGroup.position.set(z, baseH + 0.1, -x); 
+
+                // สร้าง rotator เพื่อหมุนขาทุกข้าง 90 องศาให้หันไปด้านหน้า
+                const rotator = new THREE.Group();
+                rotator.rotation.y = Math.PI / 2; 
+
+                const visuals = new THREE.Group();
                 
-                legGroup.add(leg);
-                legGroup.name = pos.name;
-                carGroup.add(legGroup);
+                const hip = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.12, 8), darkMat);
+                hip.rotation.x = Math.PI / 2;
+
+                const thigh = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.08, 0.08), bodyMat);
+                thigh.position.set(isLeft ? 0.12 : -0.12, 0.05, 0); 
+                thigh.rotation.z = isLeft ? Math.PI/6 : -Math.PI/6;
+
+                const thighAccent = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.085, 0.085), accentMat);
+                thighAccent.position.set(isLeft ? 0.15 : -0.15, 0.06, 0);
+                thighAccent.rotation.z = isLeft ? Math.PI/6 : -Math.PI/6;
+                
+                const knee = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.1, 8), darkMat);
+                knee.rotation.x = Math.PI / 2;
+                knee.position.set(isLeft ? 0.23 : -0.23, 0.11, 0);
+
+                const calf = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.35, 0.06), frameMat);
+                calf.position.set(isLeft ? 0.28 : -0.28, -0.05, 0);
+                calf.rotation.z = isLeft ? -Math.PI/8 : Math.PI/8;
+                
+                const foot = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.04, 0.12), darkMat);
+                foot.position.set(isLeft ? 0.35 : -0.35, -0.22, 0);
+
+                visuals.add(hip, thigh, thighAccent, knee, calf, foot);
+                visuals.rotation.y = rotY;
+
+                rotator.add(visuals);
+                legGroup.add(rotator);
+                
+                // Add เข้า carGroup หลัก (เพื่อให้ระบบแอนิเมชันเดิมเจอชิ้นส่วนขา)
+                return legGroup;
+            };
+
+            const distZ = 0.28;
+            const distX = 0.35;
+            
+            carGroup.add(createSpiderLeg("leg_L1", distX, distZ, true, -0.25));
+            carGroup.add(createSpiderLeg("leg_L2", distX + 0.05, 0, true, 0));
+            carGroup.add(createSpiderLeg("leg_L3", distX, -distZ, true, 0.25));
+            
+            carGroup.add(createSpiderLeg("leg_R1", -distX, distZ, false, 0.25));
+            carGroup.add(createSpiderLeg("leg_R2", -(distX + 0.05), 0, false, 0));
+            carGroup.add(createSpiderLeg("leg_R3", -distX, -distZ, false, -0.25));
+
+            // -------------------------------------------
+            // 8. ไฟตกแต่ง (Lights)
+            // -------------------------------------------
+            const lightL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.05), lightMat);
+            lightL.position.set(0.3, baseH + 0.55, 0.35);
+            const lightR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.05), lightMat);
+            lightR.position.set(-0.3, baseH + 0.55, 0.35);
+            innerGroup.add(lightL, lightR);
+
+            const tailL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.15, 0.05), redLightMat);
+            tailL.position.set(0.25, baseH + 0.4, -0.52);
+            const tailR = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.15, 0.05), redLightMat);
+            tailR.position.set(-0.25, baseH + 0.4, -0.52);
+            innerGroup.add(tailL, tailR);
+
+            // เปิดใช้งานการสร้างเงาสำหรับทุกชิ้นส่วน
+            carGroup.traverse(function(child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
             });
 
-            const containerMat = new THREE.MeshLambertMaterial({ color: 0x334155 });
-            const contGeo = new THREE.BoxGeometry(0.3, 0.2, 0.4);
-            const backCont = new THREE.Mesh(contGeo, containerMat);
-            backCont.position.set(-0.2, 0.55, 0);
-            carGroup.add(backCont);
+            // ปรับ Scale
+            carGroup.scale.set(0.7, 0.7, 0.7);
 
             return carGroup;
         }
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 
-        function createSiloModel() {
+function createSiloModel() {
             const group = new THREE.Group();
-            const bodyGeo = new THREE.BoxGeometry(2.4, 2.0, 2.4);
-            const bodyMat = new THREE.MeshLambertMaterial({color: 0x777777}); 
-            const body = new THREE.Mesh(bodyGeo, bodyMat);
-            body.position.y = 1.0;
-            body.castShadow = true;
-            body.receiveShadow = true;
 
-// เปลี่ยนโค้ดส่วนหลังคาเป็นชุดนี้ครับ:
-// เราเพิ่ม Math.PI / 2 (จุดเริ่ม) และ Math.PI (วาดแค่ครึ่งวงกลม)
-const roofGeo = new THREE.CylinderGeometry(1.2, 1.2, 2.5, 16, 1, false, Math.PI / 2, Math.PI);
-const roofMat = new THREE.MeshLambertMaterial({color: 0x334155});
-const roof = new THREE.Mesh(roofGeo, roofMat);
-roof.position.y = 2.0; 
-roof.rotation.x = Math.PI / 2; // หมุนให้นอนขนานไปกับตัวอาคาร
-roof.castShadow = true;
+            // -------------------------------------------
+            // 1. กำหนดวัสดุและสี (Materials)
+            // -------------------------------------------
+            const wallMat = new THREE.MeshLambertMaterial({ color: 0xdfd4c1 }); // สีผนังปูน (Stucco)
+            const frameMat = new THREE.MeshLambertMaterial({ color: 0x6e4a2d }); // สีไม้โครงสร้างสีเข้ม
+            const roofMat = new THREE.MeshLambertMaterial({ color: 0xc44525 }); // สีหลังคากระเบื้องดินเผา (Red/Orange)
+            const baseMat = new THREE.MeshLambertMaterial({ color: 0x828282 }); // สีฐานหิน (Stone)
+            const darkMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a }); // สีความมืดภายใน
+            const strawMat = new THREE.MeshLambertMaterial({ color: 0xd9ab38 }); // สีฟางข้าว
+            const woodPanelMat = new THREE.MeshLambertMaterial({ color: 0x8a6341 }); // สีไม้แผ่น (ประตู)
 
+            // ขนาดอ้างอิง
+            const bWidth = 2.4; 
+            const bDepth = 2.4; 
+            const halfW = bWidth / 2;
+            const halfD = bDepth / 2;
 
+            // -------------------------------------------
+            // 2. โครงสร้างหลัก (Main Building)
+            // -------------------------------------------
+            
+            // ฐานหิน (Stone Base)
+            const baseGeo = new THREE.BoxGeometry(bWidth + 0.1, 0.4, bDepth + 0.1);
+            const base = new THREE.Mesh(baseGeo, baseMat);
+            base.position.y = 0.2; 
+            base.castShadow = true; base.receiveShadow = true;
+            group.add(base);
 
+            // ตัวอาคารและหน้าจั่ว (Extruded Stucco Body)
+            // ใช้ ExtrudeGeometry เพื่อสร้างรูปทรงบ้าน 5 เหลี่ยมที่สมบูรณ์
+            const shape = new THREE.Shape();
+            shape.moveTo(-halfW, 0);         // มุมซ้ายล่าง
+            shape.lineTo(halfW, 0);          // มุมขวาล่าง
+            shape.lineTo(halfW, 1.4);        // มุมขวาบน (ก่อนขึ้นจั่ว)
+            shape.lineTo(0, 2.4);            // ยอดจั่ว (Apex)
+            shape.lineTo(-halfW, 1.4);       // มุมซ้ายบน
+            shape.lineTo(-halfW, 0);         // ปิดรูปทรง
 
-
-            const doorGeo = new THREE.BoxGeometry(0.8, 1.2, 0.1);
-            const doorMat = new THREE.MeshLambertMaterial({color: 0xf8fafc});
-            const door = new THREE.Mesh(doorGeo, doorMat);
-            door.position.set(0, 0.6, 1.2); 
-
+            const bodyGeo = new THREE.ExtrudeGeometry(shape, { depth: bDepth, bevelEnabled: false });
+            const body = new THREE.Mesh(bodyGeo, wallMat);
+            // Extrude จะยืดไปตามแกน Z เราจึงต้องถอยหลังไปครึ่งหนึ่งเพื่อให้จุดศูนย์กลางอยู่ตรงกลาง
+            body.position.set(0, 0.4, -halfD); 
+            body.castShadow = true; body.receiveShadow = true;
             group.add(body);
-            group.add(roof);
-            group.add(door);
-            group.scale.set(0.85, 0.85, 0.85);
+
+            // -------------------------------------------
+            // 3. หลังคาหลัก (Main Roof)
+            // -------------------------------------------
+            const roofOverhang = 1.7; // ความกว้างแผ่นหลังคาเผื่อยื่นออกมา
+            const roofDepth = bDepth + 0.3; // ความลึกหลังคา (ยื่นหน้า-หลัง)
+            const roofThick = 0.1;
+            const roofAngle = Math.atan2(1.0, halfW); // คำนวณความชันจากยอดจั่ว (สูง 1.0, กว้าง 1.2)
+
+            // หลังคาฝั่งซ้าย
+            const roofL = new THREE.Mesh(new THREE.BoxGeometry(roofOverhang, roofThick, roofDepth), roofMat);
+            roofL.position.set(-0.65, 2.35, 0); // วางตำแหน่งกึ่งกลางความชัน
+            roofL.rotation.z = roofAngle;
+            roofL.castShadow = true;
+            group.add(roofL);
+
+            // หลังคาฝั่งขวา
+            const roofR = new THREE.Mesh(new THREE.BoxGeometry(roofOverhang, roofThick, roofDepth), roofMat);
+            roofR.position.set(0.65, 2.35, 0);
+            roofR.rotation.z = -roofAngle;
+            roofR.castShadow = true;
+            group.add(roofR);
+
+            // ครอบสันหลังคา (Ridge Cap)
+            const ridge = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.1, roofDepth + 0.05), roofMat);
+            ridge.position.set(0, 2.85, 0);
+            group.add(ridge);
+
+            // -------------------------------------------
+            // 4. ส่วนต่อขยายด้านข้าง (Side Extension - ขวา)
+            // -------------------------------------------
+            const extX = halfW + 0.45; // ตำแหน่ง X ของส่วนต่อขยาย
+            
+            // ฐานหินส่วนต่อขยาย
+            const extBase = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.4, 1.5), baseMat);
+            extBase.position.set(extX, 0.2, 0); extBase.castShadow = true;
+            group.add(extBase);
+            
+            // ผนังส่วนต่อขยาย
+            const extWall = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.9, 1.4), wallMat);
+            extWall.position.set(extX, 0.85, 0); extWall.castShadow = true;
+            group.add(extWall);
+
+            // หลังคาส่วนต่อขยาย (Lean-to roof)
+            const extRoof = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.1, 1.6), roofMat);
+            extRoof.position.set(extX + 0.05, 1.35, 0);
+            extRoof.rotation.z = -0.3; // ลาดลงเล็กน้อย
+            extRoof.castShadow = true;
+            group.add(extRoof);
+
+            // -------------------------------------------
+            // 5. ลวดลายไม้โครงสร้าง (Timber Framing / Half-timbering)
+            // -------------------------------------------
+            // ฟังก์ชันช่วยวาดท่อนไม้
+            const createBeam = (w, h, d, x, y, z, rotZ = 0) => {
+                const beam = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), frameMat);
+                beam.position.set(x, y, z); beam.rotation.z = rotZ; beam.castShadow = true;
+                return beam;
+            };
+
+            const fZ = halfD + 0.01; // ตำแหน่งผิวหน้า
+            const bZ = -halfD - 0.01; // ตำแหน่งผิวหลัง
+
+            // เสามุม (Corner Posts)
+            group.add(createBeam(0.12, 1.4, 0.12, -halfW, 1.1, fZ));
+            group.add(createBeam(0.12, 1.4, 0.12, halfW, 1.1, fZ));
+            group.add(createBeam(0.12, 1.4, 0.12, -halfW, 1.1, bZ));
+            group.add(createBeam(0.12, 1.4, 0.12, halfW, 1.1, bZ));
+
+            // คานขวางแนวนอน (Horizontal Eave Beams)
+            group.add(createBeam(bWidth, 0.12, 0.12, 0, 1.8, fZ));
+            group.add(createBeam(bWidth, 0.12, 0.12, 0, 1.8, bZ));
+
+            // คานหน้าจั่ว (Gable Framing) - ด้านหน้า
+            group.add(createBeam(0.1, 1.0, 0.12, 0, 2.3, fZ)); // เสากลาง
+            group.add(createBeam(0.1, 1.5, 0.12, -0.6, 2.3, fZ, -roofAngle)); // ทแยงซ้าย
+            group.add(createBeam(0.1, 1.5, 0.12, 0.6, 2.3, fZ, roofAngle)); // ทแยงขวา
+            
+            // คานหน้าจั่ว - ด้านหลัง
+            group.add(createBeam(0.1, 1.0, 0.12, 0, 2.3, bZ));
+            group.add(createBeam(0.1, 1.5, 0.12, -0.6, 2.3, bZ, -roofAngle));
+            group.add(createBeam(0.1, 1.5, 0.12, 0.6, 2.3, bZ, roofAngle));
+            group.add(createBeam(0.1, 1.4, 0.12, -0.5, 1.1, bZ)); // เสากลางหลังซ้าย
+            group.add(createBeam(0.1, 1.4, 0.12, 0.5, 1.1, bZ));  // เสากลางหลังขวา
+
+            // คานรอบประตูหน้า (Door Frame)
+            group.add(createBeam(0.15, 1.0, 0.15, -0.7, 0.9, fZ));
+            group.add(createBeam(0.15, 1.0, 0.15, 0.7, 0.9, fZ));
+            group.add(createBeam(1.4, 0.15, 0.15, 0, 1.45, fZ)); 
+
+            // คานส่วนต่อขยาย
+            const extFZ = 0.7; // ขอบหน้าของส่วนต่อขยาย
+            group.add(createBeam(0.1, 0.9, 0.1, extX + 0.4, 0.85, extFZ)); // เสามุมหน้า
+            group.add(createBeam(0.1, 0.9, 0.1, extX + 0.4, 0.85, -extFZ)); // เสามุมหลัง
+            group.add(createBeam(0.8, 0.1, 0.12, extX, 1.25, extFZ)); // คานแนวนอนหน้า
+
+            // -------------------------------------------
+            // 6. ประตูและช่องเปิด (Doors & Openings)
+            // -------------------------------------------
+            // ความมืดด้านในประตูหน้า
+            const interior = new THREE.Mesh(new THREE.BoxGeometry(1.25, 1.0, 0.1), darkMat);
+            interior.position.set(0, 0.9, fZ - 0.05);
+            group.add(interior);
+
+            // ฟังก์ชันวาดบานประตูพร้อมโครงรูปตัว X/Z
+            const createDoor = (isOpen, isLeft, x, y, z) => {
+                const doorGroup = new THREE.Group();
+                const dW = 0.65; const dH = 1.0;
+                
+                // บานไม้
+                const panel = new THREE.Mesh(new THREE.BoxGeometry(dW, dH, 0.05), woodPanelMat);
+                panel.position.set(isLeft ? dW/2 : -dW/2, 0, 0);
+                
+                // กรอบและตัว X
+                const ft = 0.08; // ความหนากรอบ
+                const frameTop = new THREE.Mesh(new THREE.BoxGeometry(dW, 0.1, ft), frameMat);
+                frameTop.position.set(isLeft ? dW/2 : -dW/2, dH/2 - 0.05, 0);
+                const frameBot = new THREE.Mesh(new THREE.BoxGeometry(dW, 0.1, ft), frameMat);
+                frameBot.position.set(isLeft ? dW/2 : -dW/2, -dH/2 + 0.05, 0);
+                const frameDiag = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.1, ft), frameMat);
+                frameDiag.position.set(isLeft ? dW/2 : -dW/2, 0, 0);
+                frameDiag.rotation.z = isLeft ? 0.65 : -0.65;
+                
+                doorGroup.add(panel, frameTop, frameBot, frameDiag);
+                doorGroup.position.set(x, y, z);
+                
+                if (isOpen) doorGroup.rotation.y = isLeft ? -Math.PI/3 : Math.PI/3;
+                return doorGroup;
+            };
+
+            // บานประตูหน้า (เปิด)
+            group.add(createDoor(true, true, -0.65, 0.9, fZ + 0.05));
+            group.add(createDoor(true, false, 0.65, 0.9, fZ + 0.05));
+
+            // ประตูหลัง (ปิด)
+            group.add(createDoor(false, true, -0.325, 0.9, bZ - 0.02));
+            group.add(createDoor(false, false, 0.325, 0.9, bZ - 0.02));
+
+            // -------------------------------------------
+            // 7. หน้าต่าง (Windows)
+            // -------------------------------------------
+            const createWindow = (w, h, x, y, z) => {
+                const winGrp = new THREE.Group();
+                const hole = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.05), darkMat);
+                const frameTop = new THREE.Mesh(new THREE.BoxGeometry(w+0.1, 0.05, 0.08), frameMat);
+                frameTop.position.y = h/2;
+                const frameBot = new THREE.Mesh(new THREE.BoxGeometry(w+0.1, 0.05, 0.08), frameMat);
+                frameBot.position.y = -h/2;
+                const frameL = new THREE.Mesh(new THREE.BoxGeometry(0.05, h, 0.08), frameMat);
+                frameL.position.x = -w/2;
+                const frameR = new THREE.Mesh(new THREE.BoxGeometry(0.05, h, 0.08), frameMat);
+                frameR.position.x = w/2;
+                
+                winGrp.add(hole, frameTop, frameBot, frameL, frameR);
+                winGrp.position.set(x, y, z);
+                return winGrp;
+            };
+
+            // หน้าต่างจั่วหน้า พร้อมนกเงาดำข้างใน
+            const fWin = createWindow(0.35, 0.35, 0, 2.05, fZ + 0.02);
+            const birdShadow = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 0.06), woodPanelMat);
+            birdShadow.position.set(0, -0.05, 0);
+            fWin.add(birdShadow);
+            group.add(fWin);
+
+            // หน้าต่างจั่วหลัง
+            group.add(createWindow(0.3, 0.3, 0, 2.05, bZ - 0.02));
+
+            // หน้าต่างส่วนต่อขยาย
+            group.add(createWindow(0.3, 0.3, extX + 0.05, 0.9, extFZ + 0.02));
+
+            // -------------------------------------------
+            // 8. พร็อพประกอบฉาก (Props)
+            // -------------------------------------------
+            
+            // กองฟางข้างใน
+            const createBale = (x, y, z) => {
+                const bale = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.25, 0.35), strawMat);
+                bale.position.set(x, y, z); return bale;
+            };
+            group.add(createBale(-0.3, 0.525, fZ - 0.2));
+            group.add(createBale(0.2, 0.525, fZ - 0.1));
+            group.add(createBale(-0.1, 0.775, fZ - 0.15));
+
+            // ถังไม้ (Barrel)
+            const barrel = new THREE.Group();
+            const bBody = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.45, 12), woodPanelMat);
+            const bBand = new THREE.Mesh(new THREE.CylinderGeometry(0.185, 0.185, 0.02, 12), darkMat);
+            bBand.position.y = 0.1;
+            const bBand2 = new THREE.Mesh(new THREE.CylinderGeometry(0.185, 0.185, 0.02, 12), darkMat);
+            bBand2.position.y = -0.1;
+            barrel.add(bBody, bBand, bBand2);
+            barrel.position.set(extX - 0.1, 0.225, extFZ + 0.2); // วางหน้าส่วนต่อขยาย
+            barrel.children.forEach(c => c.castShadow = true);
+            group.add(barrel);
+
+            // ล้อเกวียน (Wagon Wheel)
+            const wheel = new THREE.Group();
+            const rim = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.025, 8, 16), frameMat);
+            wheel.add(rim);
+            for(let i=0; i<4; i++) {
+                const spoke = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.4), frameMat);
+                spoke.rotation.z = (Math.PI / 4) * i;
+                wheel.add(spoke);
+            }
+            wheel.position.set(extX - 0.6, 0.2, extFZ + 0.1);
+            wheel.rotation.y = Math.PI / 5;
+            wheel.children.forEach(c => c.castShadow = true);
+            group.add(wheel);
+
+            // โกยหรือเครื่องมือพิงผนัง
+            const tool = new THREE.Group();
+            const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.8), frameMat);
+            handle.position.y = 0.4;
+            const head = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.1, 0.02), baseMat);
+            head.position.set(0, 0.8, 0);
+            tool.add(handle, head);
+            tool.position.set(-1.0, 0.0, fZ + 0.2);
+            tool.rotation.x = -0.2; tool.rotation.z = 0.1;
+            tool.children.forEach(c => c.castShadow = true);
+            group.add(tool);
+
+            // ย่อส่วนให้พอดีกับช่องตารางของเกม
+            group.scale.set(0.75, 0.75, 0.75);
 
             return group;
         }
+
+
+
+
+
+
+
+
+
 
         const groundGeo = new THREE.PlaneGeometry(500, 500); 
         const groundMat = new THREE.MeshLambertMaterial({ color: 0x3d7a26 }); 
@@ -2253,6 +3483,16 @@ roof.castShadow = true;
         ground.position.set(COLS/2, 0, ROWS/2); 
         ground.receiveShadow = true;
         scene.add(ground);
+
+
+
+
+
+
+
+
+
+
 
         function spawnDog() {
             if (!dogGroup) {
@@ -2421,7 +3661,7 @@ roof.castShadow = true;
                         chickenTrough.userData = { isShelter: true, plotIndex: plotIndex };
                         envGroup.add(chickenTrough);
 
-                        let cowShelter = createShelter();
+                        let cowShelter = createCowShelter();
                         cowShelter.position.set(cx + PLOT_SIZE/4, 0, cz - PLOT_SIZE/2 + 2.5);
                         cowShelter.children.forEach(c => c.userData = { isShelter: true, plotIndex: plotIndex });
                         envGroup.add(cowShelter);
@@ -2445,7 +3685,11 @@ roof.castShadow = true;
                 }
             }
 
-            for (let z = 0; z < ROWS; z++) {
+
+
+
+
+      for (let z = 0; z < ROWS; z++) {
                 let row = [];
                 let gRow = [];
                 let lRow = [];
@@ -2453,36 +3697,58 @@ roof.castShadow = true;
                     let cellType = 'empty';
                     let growth = 0;
 
+                    let localX = x % (PLOT_SIZE + GAP);
+                    let localZ = z % (PLOT_SIZE + GAP);
+                    let pX = Math.floor(x / (PLOT_SIZE + GAP));
+                    let pZ = Math.floor(z / (PLOT_SIZE + GAP));
+                    let plotIndex = (pZ * PLOTS_X) + pX; 
+                    
+                    // 🌟 เว้นว่างทุกๆ ช่องที่ 3 เพื่อลดจำนวนพืชเหลือ 10x10 ต้น
+                    let isSkipCell = false;
+                    if (localX < PLOT_SIZE && localZ < PLOT_SIZE) {
+                        if (localX % 3 === 2 || localZ % 3 === 2) {
+                            isSkipCell = true;
+                        }
+                    }
+
                     if (isLoadingSave && boardLogicalSaved[z] && growthLogicalSaved[z]) {
                         cellType = boardLogicalSaved[z][x] || 'empty';
                         growth = growthLogicalSaved[z][x] || 0;
                         
-                        if (cellType !== 'empty') {
+                        if (isSkipCell && plotIndex !== 4 && plotIndex < 6) {
+                            cellType = 'skip';
+                            growth = 0;
+                        }
+                        
+                        if (cellType !== 'empty' && cellType !== 'skip') {
                             let crop = createCrop(cellType, x, z);
-                            let s = Math.max(0.01, growth / 100);
+                            // 🌟 ขยายร่างพืช 1.6 เท่า ให้ต้นใหญ่คลุมช่องว่าง
+                            let s = Math.max(0.01, (growth / 100) * 1.6);
                             crop.scale.set(s, s, s);
                             mineGroup.add(crop);
                         }
                     } else {
-                        let localX = x % (PLOT_SIZE + GAP);
-                        let localZ = z % (PLOT_SIZE + GAP);
-                        
                         if (localX < PLOT_SIZE && localZ < PLOT_SIZE) {
-                            let pX = Math.floor(x / (PLOT_SIZE + GAP));
-                            let pZ = Math.floor(z / (PLOT_SIZE + GAP));
-                            let plotIndex = (pZ * PLOTS_X) + pX; 
-                            
                             if (plotIndex === 4 || plotIndex >= 6) { 
-                                cellType = 'empty';
+                                cellType = 'empty'; 
                             } else {
-                                cellType = plotCrops[plotIndex % plotCrops.length];
-                                if (Math.random() < 0.12) cellType = 'empty';
-                                
-                                if (cellType !== 'empty') {
-                                    growth = 100;
-                                    mineGroup.add(createCrop(cellType, x, z));
+                                if (isSkipCell) {
+                                    cellType = 'skip'; 
+                                } else {
+                                    cellType = plotCrops[plotIndex % plotCrops.length];
+                                    if (Math.random() < 0.12) cellType = 'empty';
+                                    
+                                    if (cellType !== 'empty') {
+                                        growth = 100;
+                                        let crop = createCrop(cellType, x, z);
+                                        // 🌟 ขยายร่างพืช 1.6 เท่า ให้ต้นใหญ่คลุมช่องว่าง
+                                        crop.scale.set(1.6, 1.6, 1.6);
+                                        mineGroup.add(crop);
+                                    }
                                 }
                             }
+                        } else {
+                            cellType = 'skip'; 
                         }
                     }
                     
@@ -2494,7 +3760,17 @@ roof.castShadow = true;
                 growthLogical.push(gRow);
                 labelGrid.push(lRow);
             }
-            
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
             for(let i = 0; i < siloCount; i++) {
                 spawnSiloMesh(i);
             }
@@ -2544,23 +3820,27 @@ roof.castShadow = true;
 
 
 
-        setInterval(() => {
+         setInterval(() => {
             if (!isFarmActive || isPaused) return;
             for (let z = 0; z < ROWS; z++) {
                 for (let x = 0; x < COLS; x++) {
-                    if (boardLogical[z][x] !== 'empty' && growthLogical[z][x] < 100) {
-                        growthLogical[z][x] += 25; 
+                    // 🌟 เพิ่มการเช็ค !== 'skip' เพื่อไม่ให้ระบบไปยุ่งกับช่องทางเดิน
+                    if (boardLogical[z][x] !== 'empty' && boardLogical[z][x] !== 'skip' && growthLogical[z][x] < 100) {
+                        
+                        growthLogical[z][x] += 1; 
+                        
                         if (growthLogical[z][x] > 100) growthLogical[z][x] = 100;
                         
                         let crop = mineGroup.children.find(m => m.userData.x === x && m.userData.z === z);
                         if (crop) {
-                            let s = Math.max(0.1, growthLogical[z][x] / 100);
+                            // 🌟 เอาเปอร์เซ็นต์มาคูณ 1.6 (โตเต็มที่จะได้ขนาดใหญ่จุใจ)
+                            let s = Math.max(0.01, (growthLogical[z][x] / 100) * 1.6);
                             crop.scale.set(s, s, s);
                         }
                     }
                 }
             }
-        }, 5000); 
+        }, 2000); // โตขึ้น 1% ทุกๆ 2 วินาที
 		
 		
 
@@ -2750,7 +4030,7 @@ roof.castShadow = true;
             envGroup.add(silo);
         }
 
-        function isPlotEmpty(plotIndex) {
+      function isPlotEmpty(plotIndex) {
             let pX = plotIndex % PLOTS_X;
             let pZ = Math.floor(plotIndex / PLOTS_X);
             let startX = pX * (PLOT_SIZE + GAP);
@@ -2760,12 +4040,13 @@ roof.castShadow = true;
 
             for (let z = startZ; z < endZ; z++) {
                 for (let x = startX; x < endX; x++) {
-                    if (boardLogical[z] && boardLogical[z][x] !== 'empty') {
-                        return false;
+                    // 🌟 แก้ไข: เมินช่องที่เป็น 'skip' (ทางเดิน) เวลาเช็คว่าแปลงว่างไหม
+                    if (boardLogical[z] && boardLogical[z][x] !== 'empty' && boardLogical[z][x] !== 'skip') {
+                        return false; // ถ้าเจอพืชแปลว่าไม่ว่าง
                     }
                 }
             }
-            return true;
+            return true; // มีแต่ empty กับ skip ถือว่าพร้อมปลูก!
         }
 
         // ==========================================
